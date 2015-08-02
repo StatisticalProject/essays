@@ -1,3 +1,10 @@
+import com.cloudera.datascience.lsa._
+import com.cloudera.datascience.lsa.ParseWikipedia._
+import com.cloudera.datascience.lsa.RunLSA._
+import org.apache.spark.mllib.linalg._
+import org.apache.spark.mllib.linalg.distributed.RowMatrix
+import breeze.linalg.{DenseMatrix => BDenseMatrix, DenseVector => BDenseVector, SparseVector => BSparseVector}
+
 val csv = sc.textFile("file:/home/cloudera/data/training_set_rel3.tsv")
 // split / clean data
 val headerAndRows = csv.map(line => line.split("\t").map(_.trim))
@@ -15,3 +22,5 @@ var essay5=data.filter(a=>a(1).equals("5"))
 var essay6=data.filter(a=>a(1).equals("6"))
 var essay7=data.filter(a=>a(1).equals("7"))
 var essay8=data.filter(a=>a(1).equals("8"))
+
+val stopWords = sc.broadcast(ParseWikipedia.loadStopWords("deps/lsa/src/main/resources/stopwords.txt")).value
