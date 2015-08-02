@@ -1,4 +1,4 @@
-val csv = sc.textFile("data/training_set_rel3.tsv")
+val csv = sc.textFile("file:/home/cloudera/data/training_set_rel3.tsv")
 // split / clean data
 val headerAndRows = csv.map(line => line.split("\t").map(_.trim))
 // get header
