@@ -34,8 +34,8 @@ val (termDocMatrix, termIds, docIds, idfs) = ParseWikipedia.termDocumentMatrix(f
 val mat = new RowMatrix(termDocMatrix)
 val k = 200 // nombre de valeurs singuliers à garder
 val svd = mat.computeSVD(k, computeU=true)
-val topConceptTerms = RunLSA.topTermsInTopConcepts(svd, 10, 10, termIds)
-val topConceptDocs = RunLSA.topDocsInTopConcepts(svd, 10, 10, docIds)
+val topConceptTerms = RunLSA.topTermsInTopConcepts(svd, 30, 30, termIds)
+val topConceptDocs = RunLSA.topDocsInTopConcepts(svd, 30, 30, docIds)
     for ((terms, docs) <- topConceptTerms.zip(topConceptDocs)) {
               println("Concept terms: " + terms.map(_._1).mkString(", "));
               println("Concept docs: " + docs.map(_._1).mkString(", "));
