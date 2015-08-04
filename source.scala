@@ -41,5 +41,7 @@ val topConceptDocs = RunLSA.topDocsInTopConcepts(svd, 30, 30, docIds)
               println("Concept docs: " + docs.map(_._1).mkString(", "));
               println();
            }
-
-
+var all=new EmptyRDD[String,Double](sc)
+for ( a <- topConceptDocs) {
+ all=all.join(sc.parallelize(a))
+}
