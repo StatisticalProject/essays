@@ -1,3 +1,5 @@
+import java.io.File
+
 import com.cloudera.datascience.lsa._
 import com.cloudera.datascience.lsa.ParseWikipedia._
 import com.cloudera.datascience.lsa.RunLSA._
@@ -7,7 +9,7 @@ import org.apache.spark.mllib.linalg._
 import org.apache.spark.mllib.linalg.distributed.RowMatrix
 import breeze.linalg.{DenseMatrix => BDenseMatrix, DenseVector => BDenseVector, SparseVector => BSparseVector}
 
-val csv = sc.textFile("file:/home/cloudera/data/training_set_rel3.tsv")
+val csv = sc.textFile("file:"+new File(".").getCanonicalPath()+"/data/training_set_rel3.tsv")
 // split / clean data
 val headerAndRows = csv.map(line => line.split("\t").map(_.trim).map(_.replaceAll("(^\"|\"$)","")))
 // get header
@@ -63,8 +65,12 @@ for ( a <- topConceptDocs) {
     }
   }
 }
-sc.parallelize(docConcept.toSeq).saveAsTextFile("mirordocconcept")
+//Add notes
 
+var docConcept=sc.parallelize(docConcept.toSeq)
+docConcept.saveAsTextFile("mirordocconcept")
+var toJoin=essay1.map(s=> (s(0),List[Double](s(3).toDouble)))
+toJoin.join(docConcept)
 val termConcept = new HashMap[String,ListBuffer[Double]]()
 count=0
 for ( a <- topConceptTerms) {
