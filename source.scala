@@ -1,6 +1,8 @@
 import com.cloudera.datascience.lsa._
 import com.cloudera.datascience.lsa.ParseWikipedia._
 import com.cloudera.datascience.lsa.RunLSA._
+import org.apache.spark.rdd.EmptyRDD
+import scala.collection.mutable.ListBuffer
 import org.apache.spark.mllib.linalg._
 import org.apache.spark.mllib.linalg.distributed.RowMatrix
 import breeze.linalg.{DenseMatrix => BDenseMatrix, DenseVector => BDenseVector, SparseVector => BSparseVector}
@@ -41,7 +43,18 @@ val topConceptDocs = RunLSA.topDocsInTopConcepts(svd, 30, 30, docIds)
               println("Concept docs: " + docs.map(_._1).mkString(", "));
               println();
            }
-var all=new EmptyRDD[String,Double](sc)
+sc.parallelize(topConceptTerms).saveAsTextFile("conceptTerms.sav")
+sc.parallelize(topConceptDocs).saveAsTextFile("conceptDocs.sav")
+var all=sc.emptyRDD[(String,Double)]
+import collection.mutable.HashMap
+val x = new HashMap[String,ListBuffer[Double]]()
 for ( a <- topConceptDocs) {
- all=all.join(sc.parallelize(a))
+  for ( (b,c) <- a) {
+    if (!x.contains(b)) {
+      x.put(b, new ListBuffer[Double]())
+    }
+    x(b) += c
+  }
 }
+all.saveAsTextFile("test1.sav")
+
