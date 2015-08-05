@@ -47,21 +47,40 @@ sc.parallelize(topConceptTerms).saveAsTextFile("conceptTerms.sav")
 sc.parallelize(topConceptDocs).saveAsTextFile("conceptDocs.sav")
 var all=sc.emptyRDD[(String,Double)]
 import collection.mutable.HashMap
-val x = new HashMap[String,ListBuffer[Double]]()
+val docConcept = new HashMap[String,ListBuffer[Double]]()
 var count=0
 for ( a <- topConceptDocs) {
   count+=1
   for ( (b,c) <- a) {
-    if (!x.contains(b)) {
-      x.put(b, new ListBuffer[Double]())
+    if (!docConcept.contains(b)) {
+      docConcept.put(b, new ListBuffer[Double]())
     }
-    x(b) += c
+    docConcept(b) += c
   }
-  for((k,v) <- x){
+  for((k,v) <- docConcept){
     while(v.size<count){
       v+=0.0
     }
   }
 }
-all.saveAsTextFile("test1.sav")
+sc.parallelize(docConcept.toSeq).saveAsTextFile("mirordocconcept")
+
+val termConcept = new HashMap[String,ListBuffer[Double]]()
+count=0
+for ( a <- topConceptTerms) {
+  count+=1
+  for ( (b,c) <- a) {
+    if (!termConcept.contains(b)) {
+      termConcept.put(b, new ListBuffer[Double]())
+    }
+    termConcept(b) += c
+  }
+  for((k,v) <- termConcept){
+    while(v.size<count){
+      v+=0.0
+    }
+  }
+}
+sc.parallelize(termConcept.toSeq).saveAsTextFile("mirortermconcept")
+
 
