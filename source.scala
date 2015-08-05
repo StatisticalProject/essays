@@ -48,12 +48,19 @@ sc.parallelize(topConceptDocs).saveAsTextFile("conceptDocs.sav")
 var all=sc.emptyRDD[(String,Double)]
 import collection.mutable.HashMap
 val x = new HashMap[String,ListBuffer[Double]]()
+var count=0
 for ( a <- topConceptDocs) {
+  count+=1
   for ( (b,c) <- a) {
     if (!x.contains(b)) {
       x.put(b, new ListBuffer[Double]())
     }
     x(b) += c
+  }
+  for((k,v) <- x){
+    while(v.size<count){
+      v+=0.0
+    }
   }
 }
 all.saveAsTextFile("test1.sav")
