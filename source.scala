@@ -8,6 +8,7 @@ import scala.collection.mutable.ListBuffer
 import org.apache.spark.mllib.linalg._
 import org.apache.spark.mllib.linalg.distributed.RowMatrix
 import breeze.linalg.{DenseMatrix => BDenseMatrix, DenseVector => BDenseVector, SparseVector => BSparseVector}
+import org.apache.spark.mllib.regression._
 
 val csv = sc.textFile("file:"+new File(".").getCanonicalPath()+"/data/training_set_rel3.tsv")
 // split / clean data
@@ -67,10 +68,32 @@ for ( a <- topConceptDocs) {
 }
 //Add notes
 
-var docConcept=sc.parallelize(docConcept.toSeq)
 docConcept.saveAsTextFile("mirordocconcept")
-var toJoin=essay1.map(s=> (s(0),List[Double](s(3).toDouble)))
-toJoin.join(docConcept)
+var docConceptRDD=sc.parallelize(docConcept.toSeq)
+var toJoin=essay1.map(s=> (s(0),s(3).toDouble))
+var joined=toJoin.join(docConceptRDD)
+
+//make labeled point
+var labeled=joined.map(a => LabeledPoint(a._2._1, Vectors.dense(a._2._2.toArray)))
+
+//make linear regression
+import org.apache.spark.mllib.regression.LabeledPoint
+import org.apache.spark.mllib.regression.LinearRegressionModel
+import org.apache.spark.mllib.regression.LinearRegressionWithSGD
+import org.apache.spark.mllib.linalg.Vectors
+val model = LinearRegressionWithSGD.train(labeled, numIterations)
+
+//make logistic regression
+import org.apache.spark.SparkContext
+import org.apache.spark.mllib.classification.{LogisticRegressionWithLBFGS, LogisticRegressionModel}
+import org.apache.spark.mllib.evaluation.MulticlassMetrics
+import org.apache.spark.mllib.regression.LabeledPoint
+import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.mllib.util.MLUtils
+// Run training algorithm to build the model
+val model = new LogisticRegressionWithLBFGS().setNumClasses(7).run(labeled)
+
+
 val termConcept = new HashMap[String,ListBuffer[Double]]()
 count=0
 for ( a <- topConceptTerms) {
