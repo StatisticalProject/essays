@@ -39,7 +39,8 @@ def makeLSAAndSave( essay:RDD[Array[String]], column:Int , name:String,stopWords
   var lemmatized=essay.map(s=> (s(0),ParseWikipedia.plainTextToLemmas(s(2), stopWords, ParseWikipedia.createNLPPipeline())))
   val filtered = lemmatized.filter(_._2.size > 1)
   val documentSize=essay.collect().length
-
+  println("Documents Size : "+documentSize)
+  println("Number of Terms : "+numTerms)
   val (termDocMatrix, termIds, docIds, idfs) = ParseWikipedia.termDocumentMatrix(filtered, stopWords, numTerms, sc)
 
   val mat = new RowMatrix(termDocMatrix)
