@@ -32,8 +32,8 @@ var essay8=data.filter(a=>a(1).equals("8"))
 
 val stopWordsIn = sc.broadcast(ParseWikipedia.loadStopWords("deps/lsa/src/main/resources/stopwords.txt")).value
 val numTerms = 500
-val k = 100 // nombre de valeurs singuliers à garder
-val nbConcept = 20
+val k = 30 // nombre de valeurs singuliers à garder
+val nbConcept = 30
 
 def makeLSAAndSave( essay:RDD[Array[String]], column:Int , name:String,stopWords:Set[String]) :Int = {
   var lemmatized=essay.map(s=> (s(0),ParseWikipedia.plainTextToLemmas(s(2), stopWords, ParseWikipedia.createNLPPipeline())))
@@ -42,7 +42,8 @@ def makeLSAAndSave( essay:RDD[Array[String]], column:Int , name:String,stopWords
   println("Documents Size : "+documentSize)
   println("Number of Terms : "+numTerms)
   val (termDocMatrix, termIds, docIds, idfs) = ParseWikipedia.termDocumentMatrix(filtered, stopWords, numTerms, sc)
-
+  //save idf for validation process
+  sc.parallelize(idfs.toSeq).saveAsTextFile("idf_"+name)
   val mat = new RowMatrix(termDocMatrix)
 
   val svd = mat.computeSVD(k, computeU=true)
