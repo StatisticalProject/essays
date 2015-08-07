@@ -43,7 +43,7 @@ def makeLSAAndSave( essay:RDD[Array[String]], column:Int , name:String,stopWords
   println("Number of Terms : "+numTerms)
   val (termDocMatrix, termIds, docIds, idfs) = ParseWikipedia.termDocumentMatrix(filtered, stopWords, numTerms, sc)
   //save idf for validation process
-  sc.parallelize(idfs.toSeq).saveAsObjectFile("idfObj_"+name)
+  //sc.parallelize(idfs.toSeq).saveAsObjectFile("idfObj_"+name)
   sc.parallelize(idfs.toSeq).saveAsTextFile("idf_"+name)
   val mat = new RowMatrix(termDocMatrix)
 
