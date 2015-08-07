@@ -43,6 +43,7 @@ def makeLSAAndSave( essay:RDD[Array[String]], column:Int , name:String,stopWords
   println("Number of Terms : "+numTerms)
   val (termDocMatrix, termIds, docIds, idfs) = ParseWikipedia.termDocumentMatrix(filtered, stopWords, numTerms, sc)
   //save idf for validation process
+  sc.parallelize(idfs.toSeq).saveAsObjectFile("idfObj_"+name)
   sc.parallelize(idfs.toSeq).saveAsTextFile("idf_"+name)
   val mat = new RowMatrix(termDocMatrix)
 
@@ -74,7 +75,9 @@ def makeLSAAndSave( essay:RDD[Array[String]], column:Int , name:String,stopWords
   var docConceptRDD=sc.parallelize(docConcept.toSeq)
   var toJoin=essay.map(s=> (s(0),s(column).toDouble))
   var joined=toJoin.join(docConceptRDD)
-  joined.saveAsTextFile("docConceptLSAWithLabel_"+name)
+
+
+  joined.map(a => (a._1,a._2._1, a._2._2.toArray.mkString(","))).saveAsTextFile("docConceptLSAWithLabel_"+name)
   //make labeled point
   var labeled=joined.map(a => LabeledPoint(a._2._1, Vectors.dense(a._2._2.toArray)))
 
@@ -94,7 +97,8 @@ def makeLSAAndSave( essay:RDD[Array[String]], column:Int , name:String,stopWords
       }
     }
   }
-  sc.parallelize(termConcept.toSeq).saveAsTextFile("termConceptLSA_"+name)
+  var parr=sc.parallelize(termConcept.toSeq)
+  parr.map(a => (a._1,a._2.toArray.mkString(","))).saveAsTextFile("termConceptLSA_"+name)
   return 0
 }
 
