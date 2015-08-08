@@ -6,7 +6,9 @@ import org.apache.spark.mllib.classification.{LogisticRegressionWithLBFGS, Logis
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.evaluation.MulticlassMetrics
 import java.io.File
-import org.apache.commons.io.FileUtils;
+import java.io._
+
+import org.apache.commons.io.FileUtils
 
 var path="file:"+new File(".").getCanonicalPath()
 
@@ -38,19 +40,34 @@ def makeModelSave( name:String, alpha:Int , numClasse:Int) :Int = {
 
 	// Get evaluation metrics.
 	val metrics = new MulticlassMetrics(predictionAndLabels)
-	val precision = metrics.precision
+	// Save metrics
+	var writer = new PrintWriter(new FileWriter(new File(".").getCanonicalPath()+"/ResultTest.txt" ,true))
+	var key=name+","+metrics.precision+","+metrics.recall+";"+metrics.fMeasure
+	writer.println(key)
+	metrics.labels.foreach(label => 
+	{
+		key=name+"-"+label+","+metrics.precision(label)+","+metrics.recall(label)+","
+		key+=metrics.fMeasure(label)
+		writer.println(key)
+	})
+      	writer.close()
 	
 	// Save and load model
+	
+	writer = new PrintWriter(new FileWriter(new File(".").getCanonicalPath()+"/ModelTest.txt" ,true))
+	writer.println(name+","+modelLogistic.weights.toArray.mkString(","))
+	writer.close()
 	modelLogistic.save(sc, dir)
-	val sameModel = LogisticRegressionModel.load(sc, dir)
+	//val sameModel = LogisticRegressionModel.load(sc, dir)
 	return 0
 }
-
+new File(new File(".").getCanonicalPath()+"/ResultTest.txt").delete()
+new File(new File(".").getCanonicalPath()+"/ModelTest.txt").delete()
 makeModelSave( "Essay1", 0-1 , 6) 
 makeModelSave( "Essay2", 0-1 , 6) 
 makeModelSave( "Essay3", 0 , 4) 
 makeModelSave( "Essay4", 0 , 5) 
-makeModelSave( "Essay5", 0 , 5) 
+makeModelSave( "Essay5", 0 , 4) 
 makeModelSave( "Essay6", 0 , 5) 
 makeModelSave( "Essay7", 0 , 16) 
 makeModelSave( "Essay8", 0 , 31) 
