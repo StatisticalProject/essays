@@ -15,6 +15,7 @@ var path="file:"+new File(".").getCanonicalPath()
 
 def makeModelSave( name:String, alpha:Int , numClasse:Int) :Int = {
 	var dir=path+"/logisticModel_"+name	
+	new File("./Predict_"+name+".csv").delete()
 	var toDelete=new File(dir)
 	if(toDelete.isDirectory())
 	{
@@ -38,10 +39,20 @@ def makeModelSave( name:String, alpha:Int , numClasse:Int) :Int = {
 	  (prediction, label)
 	}
 
+	// Save PREDICT
+	
+	predictionAndLabels.foreach(label => 
+	{
+		var writer = new PrintWriter(new FileWriter(new File(".").getCanonicalPath()+"/Predict_"+name+".csv" ,true))
+		writer.println(label._1+","+label._2)
+		writer.close()
+	})
+      	
+
 	// Get evaluation metrics.
 	val metrics = new MulticlassMetrics(predictionAndLabels)
 	// Save metrics
-	var writer = new PrintWriter(new FileWriter(new File(".").getCanonicalPath()+"/ResultTest.txt" ,true))
+	var writer = new PrintWriter(new FileWriter(new File(".").getCanonicalPath()+"/ResultTest.csv" ,true))
 	var key=name+","+metrics.precision+","+metrics.recall+";"+metrics.fMeasure
 	writer.println(key)
 	metrics.labels.foreach(label => 
@@ -54,15 +65,15 @@ def makeModelSave( name:String, alpha:Int , numClasse:Int) :Int = {
 	
 	// Save and load model
 	
-	writer = new PrintWriter(new FileWriter(new File(".").getCanonicalPath()+"/ModelTest.txt" ,true))
+	writer = new PrintWriter(new FileWriter(new File(".").getCanonicalPath()+"/ModelTest.csv" ,true))
 	writer.println(name+","+modelLogistic.weights.toArray.mkString(","))
 	writer.close()
 	modelLogistic.save(sc, dir)
 	//val sameModel = LogisticRegressionModel.load(sc, dir)
 	return 0
 }
-new File(new File(".").getCanonicalPath()+"/ResultTest.txt").delete()
-new File(new File(".").getCanonicalPath()+"/ModelTest.txt").delete()
+new File(new File(".").getCanonicalPath()+"/ResultTest.csv").delete()
+new File(new File(".").getCanonicalPath()+"/ModelTest.csv").delete()
 makeModelSave( "Essay1", 0-1 , 6) 
 makeModelSave( "Essay2", 0-1 , 6) 
 makeModelSave( "Essay3", 0 , 4) 

@@ -1,4 +1,5 @@
-import java.io.File
+//make linear regression
+import java.io._
 
 import com.cloudera.datascience.lsa._
 import com.cloudera.datascience.lsa.ParseWikipedia._
@@ -77,7 +78,10 @@ def makeLSAAndSave( essay:RDD[Array[String]], column:Int , name:String,stopWords
   var joined=toJoin.join(docConceptRDD)
 
 
-  joined.map(a => (a._1,a._2._1, a._2._2.toArray.mkString(","))).saveAsTextFile("docConceptLSAWithLabel_"+name)
+  var toWrite=joined.map(a => (a._1,a._2._1, a._2._2.toArray.mkString(",")))
+	toWrite.saveAsTextFile("docConceptLSAWithLabel_"+name)
+	
+	
   //make labeled point
   var labeled=joined.map(a => LabeledPoint(a._2._1, Vectors.dense(a._2._2.toArray)))
 
