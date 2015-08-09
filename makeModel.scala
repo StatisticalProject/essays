@@ -55,7 +55,7 @@ def makeModelSave( name:String, alpha:Int , numClasse:Int, threshold:Double) :In
 	val metrics = new MulticlassMetrics(predictionAndLabels)
 	// Save metrics
 	var writer = new PrintWriter(new FileWriter(new File(".").getCanonicalPath()+"/ResultTest.csv" ,true))
-	var key=name+","+threshold+",T,"+metrics.precision+","+metrics.recall+";"+metrics.fMeasure
+	var key=name+","+threshold+",T,"+metrics.precision+","+metrics.recall+","+metrics.fMeasure
 	writer.println(key)
 	metrics.labels.foreach(label => 
 	{
