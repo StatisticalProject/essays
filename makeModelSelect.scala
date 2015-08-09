@@ -77,33 +77,57 @@ def makeModelSave( name:String, alpha:Int , numClasse:Int, threshold:Double, cho
 	//val sameModel = LogisticRegressionModel.load(sc, dir)
 	return metrics.precision 
 }
-new File(new File(".").getCanonicalPath()+"/ResultTest.csv").delete()
-new File(new File(".").getCanonicalPath()+"/ModelTest.csv").delete()
+
 var th=0.5
-var precGl=99999.99
+var precGl= -1.0
+
+def makeBestModelSave( name:String, alpha:Int , numClasse:Int, threshold:Double) :Double = {
 var globaArr=Array[Int]()
+var globaWin=Array[Int]()
 breakable{
 	for( i<-0 to 29){
 		var columnChoice=0
+		
 		var hasChanged=false
-		for( i<-0 to 29){
-			val marray=globaArr.union(Array(i))
-			val prec=makeModelSave( "Essay1", 0-1 , 6,th,marray,false)
-			if(precGl>prec){
-				precGl=prec
-				columnChoice=i
-				hasChanged=true
+		var precBest= -1.0
+		var injected=globaArr.toSet
+		for( j<-0 to 29){
+			if(!injected.contains(j)){
+				columnChoice=j
+			}
+		}
+		for( j<-0 to 29){
+			if(!injected.contains(j)){
+				val marray=globaArr.union(Array(i))
+				val prec=makeModelSave( name, alpha , numClasse,threshold,marray,false)
+				if(precBest<prec){
+					precBest=prec
+					columnChoice=j
+					hasChanged=true
+				}
 			}
 		}
 		if(hasChanged){
+			if (precGl<precBest){
+				
+				globaWin=globaArr.union(Array(columnChoice))
+				precGl=precBest
+				var writer = new PrintWriter(new FileWriter(new File(".").getCanonicalPath()+"/SelectTest.csv" ,true))
+				writer.println(name+","+globaWin.mkString(",")+","+precBest)
+				writer.close()
+			}
 			globaArr=globaArr.union(Array(columnChoice))
 		}else{
 			break
 		}
 	}
 }
-println("eeeeeeeeeeeeeeeeeeeeeeeeeee"+globaArr)
-makeModelSave( "Essay1", 0-1 , 6,th,globaArr,true)
+
+makeModelSave( name, alpha , numClasse,threshold,globaWin,true)
+	return 0.0
+}
+new File("./SelectTest.csv").delete()
+makeBestModelSave( "Essay1", 0-1 , 6,th) 
 //makeModelSave( "Essay2", 0-1 , 6,th) 
 //makeModelSave( "Essay3", 0 , 4,th) 
 //makeModelSave( "Essay4", 0 , 4,th) 
