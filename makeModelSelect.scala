@@ -128,13 +128,13 @@ makeModelSave( name, alpha , numClasse,threshold,globaWin,true)
 }
 new File("./SelectTest.csv").delete()
 makeBestModelSave( "Essay1", 0-1 , 6,th) 
-//makeModelSave( "Essay2", 0-1 , 6,th) 
-//makeModelSave( "Essay3", 0 , 4,th) 
-//makeModelSave( "Essay4", 0 , 4,th) 
-//makeModelSave( "Essay5", 0 , 5,th) 
-//makeModelSave( "Essay6", 0 , 5,th) 
-//makeModelSave( "Essay7", 0 , 13,th) 
-//makeModelSave( "Essay8", 0-5 , 26,th) 
+makeBestModelSave( "Essay2", 0-1 , 6,th) 
+makeBestModelSave( "Essay3", 0 , 4,th) 
+makeBestModelSave( "Essay4", 0 , 4,th) 
+makeBestModelSave( "Essay5", 0 , 5,th) 
+makeBestModelSave( "Essay6", 0 , 5,th) 
+makeBestModelSave( "Essay7", 0 , 13,th) 
+makeBestModelSave( "Essay8", 0-5 , 26,th) 
 
 
 
