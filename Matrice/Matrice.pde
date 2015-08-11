@@ -17,7 +17,7 @@ int sizeButtonH=40;
 int actualEssay=1;
 boolean sortActual=false;
 int limitError=22;
-
+int nbChange=0;
 void setup() {
   size(1024, 768);
   tableEssay1 = loadTable("TermConcept_Essay1.csv");
@@ -109,6 +109,7 @@ void mousePressed() {
   if(overRect(x,40,sizeButtonW,sizeButtonH)){
     sortActual=!sortActual;
     limitError=15;
+    actualIndexSort=0;
   }  
 }
 
@@ -168,20 +169,25 @@ void sortAllLine(){
       }
       //same value
       if(same){
+        nbChange++;
         actualTableEssay=exchangeLines(actualTableEssay,i+nextLine,j);
         nextLine++;
         if(nextLine>50){
           break;
         }
       }
-      
-      
     }
   actualIndexSort+=nextLine;
   if(actualIndexSort>actualTableEssay.getRowCount())
   {
+    if(nbChange==0) {
+      sortActual=false;
+    }
     limitError=(int)(limitError-1);
     actualIndexSort=0;
+    if(limitError<5){
+      limitError=5;
+    }
   }
   
 }
@@ -257,18 +263,12 @@ void drawAll(int xStart,int xEnd){
     }
     translate(-pixelsizeW*(row.getColumnCount()-1), 0);
     
-    
-    
-    
   }
-  //println( " draw : "+actualIndexSort+" "+actualTableEssay.getRowCount()); 
   popMatrix();
 }
 
 
 void drawPart(int xStart,int xEnd){
-  
-  
   int pixelsizeH=20;
   int pixelsizeW=20;
   //translate(800, 0);
@@ -290,7 +290,6 @@ void drawPart(int xStart,int xEnd){
     for (int i=1;i<row.getColumnCount();i++)
     {
       translate(pixelsizeW, 0);
-
       float value=row.getFloat(i);
       fill(inside[calculateSpace(value)]);
       rect(0, 0, pixelsizeW, pixelsizeH);
