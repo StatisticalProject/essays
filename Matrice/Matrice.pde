@@ -66,7 +66,7 @@ void draw(){
     calculate(mouseX,mouseY,750,globalStartH);
   } 
 }
-int limitError=20;
+int limitError=17;
 void sortAllLine(){
   if(actualIndexSort>tableEssay1.getRowCount())
   {
@@ -92,17 +92,17 @@ void sortAllLine(){
       if(same){
         tableEssay1=exchangeLines(tableEssay1,i+nextLine,j);
         nextLine++;
-        if(nextLine>100){
-          break;
-        }
+        //if(nextLine>){
+        //  break;
+       // }
       }
-      actualIndexSort+=nextLine;
+      
       
     }
-  actualIndexSort++;
+  actualIndexSort+=1;
   if(actualIndexSort>tableEssay1.getRowCount())
   {
-    limitError=(int)(limitError*0.5);
+    limitError=(int)(limitError-1);
     actualIndexSort=0;
   }
   
