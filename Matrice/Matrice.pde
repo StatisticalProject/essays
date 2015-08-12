@@ -177,7 +177,12 @@ void sortAllLine(){
         }
       }
     }
-  actualIndexSort+=nextLine;
+    //if no change make it at the end
+    if(nbChange==0) {
+      actualTableEssay=exchangeLines(actualTableEssay,actualIndexSort,actualTableEssay.getColumnCount()-1);
+    } else{
+      actualIndexSort+=nextLine;
+    }
   if(actualIndexSort>actualTableEssay.getRowCount())
   {
     if(nbChange==0) {
