@@ -11,7 +11,7 @@ import java.io._
 import org.apache.commons.io.FileUtils
 
 var path="file:"+new File(".").getCanonicalPath()
-
+var nbConcept=30
 
 def makeModelSave( name:String, alpha:Int , numClasse:Int, threshold:Double) :Int = {
 	var dir=path+"/logisticModel_"+name	
@@ -68,7 +68,16 @@ def makeModelSave( name:String, alpha:Int , numClasse:Int, threshold:Double) :In
 	// Save and load model
 	
 	writer = new PrintWriter(new FileWriter(new File(".").getCanonicalPath()+"/ModelTest.csv" ,true))
-	writer.println(name+","+modelLogistic.weights.toArray.mkString(","))
+	var begin=0
+	var end=nbConcept
+	var label=0;
+	while(modelLogistic.weights.toArray.slice(begin,end).length>0){
+		writer.println(name+","+label+","+modelLogistic.weights.toArray.slice(begin,end).mkString(","))
+		begin=end
+		end=begin+nbConcept
+		label+=1
+	}
+	
 	writer.close()
 	modelLogistic.save(sc, dir)
 	//val sameModel = LogisticRegressionModel.load(sc, dir)

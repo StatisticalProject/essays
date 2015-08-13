@@ -154,6 +154,8 @@ void sortAllLine(){
   int i=actualIndexSort;
   int nextLine=1;
     TableRow row=actualTableEssay.getRow(i);
+    int previousError=actualTableEssay.getRowCount()-1;
+    int expected=i;
     for (int j=i+1;j<actualTableEssay.getRowCount();j++){
       TableRow rowSame=actualTableEssay.getRow(j);
       boolean same=true;
@@ -170,18 +172,30 @@ void sortAllLine(){
       //same value
       if(same){
         nbChange++;
-        actualTableEssay=exchangeLines(actualTableEssay,i+nextLine,j);
+        if(nbError<previousError){
+          expected=j;
+          previousError=nbError;
+          //actualTableEssay=exchangeLines(actualTableEssay,i+1,j);
+        }else{
+          //actualTableEssay=exchangeLines(actualTableEssay,i+nextLine,j);
+        }
         nextLine++;
         if(nextLine>50){
           break;
         }
+        
       }
     }
+    //make best
+    if(i!=expected){
+      actualTableEssay=exchangeLines(actualTableEssay,i+1,expected);  
+    }
+    
     //if no change make it at the end
     if(nbChange==0) {
       actualTableEssay=exchangeLines(actualTableEssay,actualIndexSort,actualTableEssay.getColumnCount()-1);
     } else{
-      actualIndexSort+=nextLine;
+      actualIndexSort++;
     }
   if(actualIndexSort>actualTableEssay.getRowCount())
   {
@@ -191,7 +205,7 @@ void sortAllLine(){
     limitError=(int)(limitError-1);
     actualIndexSort=0;
     if(limitError<5){
-      limitError=5;
+      limitError=2;
     }
   }
   
