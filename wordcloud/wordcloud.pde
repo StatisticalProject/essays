@@ -40,7 +40,7 @@ void setup(){
         
         actu=makeSimple(tableEssay1);
         HashMap<String,ArrayList<TermForce> > ret=makeComplex (tableEssay1,modeles[0]);
-        actu=ret.get("4");
+        actu=ret.get("3");
         println(tableEssay1.getColumnCount());
         
       }
@@ -115,7 +115,7 @@ class TermForce{
   float tileW,tileH;
   public TermForce(String name,float value,int x,int y){
     this.name=name;
-    this.value=min(100,map(value,0,1,4,70));
+    this.value=max(4,min(100,map(value,0.4,1,4,100)));
     this.colori=map(value,0,1,255,50);
     
     this.x=x;
