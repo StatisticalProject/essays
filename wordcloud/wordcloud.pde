@@ -1,6 +1,8 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Collections;
 ArrayList<TermForce> actu;
 Model [] modeles= new Model[8];
@@ -41,7 +43,7 @@ void setup(){
         size(800,800);
         
         actu=makeSimple(tableEssay1);
-        complete=sortAndOrder(makeComplex (tableEssay1,modeles[0]),50);
+        complete=sortAndOrder(makeComplex (tableEssay1,modeles[0]),500);
         arrange(complete);
         actu=complete.get(BASE);
         println(tableEssay1.getColumnCount());
@@ -72,7 +74,7 @@ void setup(){
 void arrange(HashMap<String,ArrayList<TermForce> > arranging) {
      
     float cx=width/2,cy=height/2;
-    float R=0.0,dR=0.2,theta=0.0,dTheta=0.5;
+    float R=0.0,dR=0.005,theta=0.0,dTheta=0.05;
     int count=0;
     ArrayList<TermForce> bases=arranging.get(BASE);
     ArrayList<TermForce> arrayCalcul=new ArrayList();
@@ -106,7 +108,7 @@ void arrange(HashMap<String,ArrayList<TermForce> > arranging) {
           R+=dR;
         }while(check(arrayCalcul,arrange)&&count++ <10000);
         arrayCalcul.add(arrange);
-        println(arrange.x+":"+arrange.y+":"+arrange.tileW+":"+arrange.tileH+":"+R);
+        println(arrange.x+":"+arrange.value+"::"+arrange.y+":"+arrange.tileW+":"+arrange.tileH+":"+R);
       }
       
     }
@@ -123,42 +125,32 @@ boolean check(ArrayList<TermForce> checks, TermForce toCheck){
   return false;
 }
       
-HashMap<String,ArrayList<TermForce> > sortAndOrder(HashMap<String,ArrayList<TermForce> > arranging,int size) {
+HashMap<String,ArrayList<TermForce> > sortAndOrder(HashMap<String,ArrayList<TermForce> > arranging,int sized) {
    HashMap<String,ArrayList<TermForce> > termeSize = new HashMap<String,ArrayList<TermForce> >();
-    for (String label : arranging.keySet()) {
-      termeSize.put(label,new ArrayList<TermForce>());
-    }
-    ArrayList<TermForce> bases=arranging.get(BASE);
-    ArrayList<TermForce> basesClone=new ArrayList();
-    basesClone.addAll(bases);
-    Collections.reverse(basesClone);
-    ArrayList<TermForce>  basesCloneFilter=new ArrayList();
-    int counter=0;
-    for(TermForce force:basesClone){
-      if(counter++<size){
-              basesCloneFilter.add(force);
-      }else{
-            break;
-      }
-    }
-    termeSize.put(BASE,basesCloneFilter);
     //respect same order for all
     for (String label : arranging.keySet()) {
       ArrayList<TermForce> labeled=arranging.get(label);
-      ArrayList<TermForce> labelClone=new ArrayList();
-      counter=0;
-      for(TermForce force:basesClone){
-        for(TermForce forceClo:labeled){
-          if(force.name.equals(forceClo.name)){
-            if(counter++<size){
-              labelClone.add(forceClo);
-            }
-            break;
-          }
+      List<TermForce> labelClone=new ArrayList();
+      labelClone.addAll(labeled);
+      Collections.sort(labelClone,
+        new Comparator<TermForce>(){
+          public int compare(TermForce o1, TermForce o2){
+            return o1.compareTo(o2);
         }
+      });
+      ArrayList<TermForce> labelCloneFilter=new ArrayList();
+      counter=0;
+      println("oo4");
+      for(int i=0;i<labelClone.size();i++){
+            TermForce force=labelClone.get(i);
+            if(counter++<sized){
+              labelCloneFilter.add(force);
+              println(force.value);
+            }
       }
-      termeSize.put(label,labelClone);
-      
+      println("oo");
+      termeSize.put(label,labelCloneFilter);
+     
     }
     return termeSize;
 } 
@@ -237,21 +229,29 @@ class MaxSize{
   
   float max=0.0;
   float min=99999.9;
+  float fontMax=10;
+  float fontMin=5;
 }
 
-class TermForce implements Comparable<TermForce> {
+class TermForceComparator implements Comparator<TermForce>{
+  int compare(TermForce o1, TermForce o2){
+    return o1.compareTo(o2);
+  }
+}
+
+class TermForce  {
   String name;
   float value;
   float fontsize;
-  float colori;
+  color colori;
   int x,y;
   float tileW,tileH;
   MaxSize size;
   public TermForce(String name,float value,int x,int y,MaxSize max){
     this.name=name;
     this.value=value;
-    this.fontsize=max(4,min(20,map(value,0.0,1,4,20)));
-    this.colori=color(10, 40, 5);
+    this.fontsize=max(4,min(20,map(value,0.0,1,max.fontMin,max.fontMax)));
+    this.colori=color(random(name.toCharArray()[0]),random(name.toCharArray()[0]),random(name.toCharArray()[0]));
     this.size=max;
     this.x=x;
     this.y=y;
@@ -259,7 +259,7 @@ class TermForce implements Comparable<TermForce> {
   }
   
   public void calculateValue(){  
-    fontsize=max(6,min(30,map(value,size.min,size.max,6,30)));
+    fontsize=max(size.fontMin,min(size.fontMax,map(value,size.min,size.max,size.fontMin,size.fontMax)));
   }  
   
   public void calculateDisplay(){
@@ -293,7 +293,9 @@ class TermForce implements Comparable<TermForce> {
   }
   
   public int compareTo(TermForce anotherInstance) {
-        return (int)(value*1000.0 - anotherInstance.value*1000.0);
+        int acc=(int)map(value,size.min,size.max,0,100);
+        int ecc=(int)map(anotherInstance.value,anotherInstance.size.min,anotherInstance.size.max,0,100);
+        return ecc-acc;
     }
   
   
