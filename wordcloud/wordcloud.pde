@@ -7,8 +7,9 @@ import java.util.Collections;
 ArrayList<TermForce> actu;
 Model [] modeles= new Model[8];
 String BASE="Base";
+Table tableEssay1;
 void setup(){
-	Table tableEssay1 = loadTable("TermConcept_Essay1.csv");
+	tableEssay1 = loadTable("TermConcept_Essay1.csv");
 	Table tableEssay2 = loadTable("TermConcept_Essay2.csv");
 	Table tableEssay3 = loadTable("TermConcept_Essay3.csv");
 	Table tableEssay4 = loadTable("TermConcept_Essay4.csv");
@@ -42,24 +43,38 @@ void setup(){
         }
         size(800,800);
         
-        actu=makeSimple(tableEssay1);
-        complete=sortAndOrder(makeComplex (tableEssay1,modeles[0]),500);
+
+        completeActu=makeComplex (tableEssay1,modeles[0]);
+        completeActu=sortAndOrder(completeActu);
+        complete=select(sortAndOrder(completeActu),500);
+        calculateFontSize(complete);
         arrange(complete);
         actu=complete.get(BASE);
         println(tableEssay1.getColumnCount());
-       
+        
+        
       
       }
       HashMap<String,ArrayList<TermForce> > complete;
-      int counter=1;
+      HashMap<String,ArrayList<TermForce> > completeActu;
+      int maxiXounter=1;
+      int maxi=500;
       void keyPressed() {
-        if(counter>4){
+        complete=select(completeActu,maxi);
+        maxi-=50;
+        maxi=max(50,maxi);
+        calculateFontSize(complete);
+        arrange(complete);
+        if(maxiXounter>4){
           actu=complete.get(BASE);
-          counter=1;
+          maxiXounter=1;
         }
         else{
-          actu=complete.get(""+counter++);
+          actu=complete.get(""+maxiXounter);
+          maxiXounter++; 
         }
+        println("fff" +maxiXounter);
+        
         
       }
       void draw(){
@@ -68,47 +83,40 @@ void setup(){
           term.display();
         }
         
+        
+
+
+        
       
       }
-
+void calculateFontSize(HashMap<String,ArrayList<TermForce> > arranging) {
+  for (String label : arranging.keySet()) {
+      ArrayList<TermForce> bases=arranging.get(label);
+      bases.get(0).size.fontMax=max(11,map(bases.size(),500,1,14,36));
+  }
+  
+  
+}
 void arrange(HashMap<String,ArrayList<TermForce> > arranging) {
      
     float cx=width/2,cy=height/2;
-    float R=0.0,dR=0.005,theta=0.0,dTheta=0.05;
-    int count=0;
-    ArrayList<TermForce> bases=arranging.get(BASE);
-    ArrayList<TermForce> arrayCalcul=new ArrayList();
-    for(TermForce arrange:bases){
-      arrange.calculateValue();
-      arrange.calculateDisplay();
-      do{
-        arrange.x=(int)(cx+R*cos(theta));
-        arrange.y=(int)(cy+R*sin(theta));
-        theta+=dTheta;
-        R+=dR;
-      }
-      while(check(arrayCalcul,arrange)&&count++ <10000);
-      arrayCalcul.add(arrange);
-    }
-    
+    float R=0.0,dR=0.002,theta=0.0,dTheta=0.08;
     for (String label : arranging.keySet()) {
       R=0.0;
       theta=0.0;
-      bases = arranging.get(label);
-      arrayCalcul=new ArrayList();
+      ArrayList<TermForce>  bases = arranging.get(label);
+      ArrayList<TermForce> arrayCalcul=new ArrayList();
       for(TermForce arrange:bases){
         arrange.calculateValue();
         arrange.calculateDisplay();
-        count=0;
         do{
           arrange.x=(int)(cx+R*cos(theta));
           arrange.y=(int)(cy+R*sin(theta));
           
           theta+=dTheta;
           R+=dR;
-        }while(check(arrayCalcul,arrange)&&count++ <10000);
+        }while(check(arrayCalcul,arrange));
         arrayCalcul.add(arrange);
-        println(arrange.x+":"+arrange.value+"::"+arrange.y+":"+arrange.tileW+":"+arrange.tileH+":"+R);
       }
       
     }
@@ -116,6 +124,9 @@ void arrange(HashMap<String,ArrayList<TermForce> > arranging) {
 }
 
 boolean check(ArrayList<TermForce> checks, TermForce toCheck){
+  if(toCheck.checkLimit(0,0,width,height)){
+    return true;
+  }
   for(TermForce onCheck:checks){
     if(toCheck.intersect(onCheck)){
       return true;
@@ -124,25 +135,17 @@ boolean check(ArrayList<TermForce> checks, TermForce toCheck){
 
   return false;
 }
-      
-HashMap<String,ArrayList<TermForce> > sortAndOrder(HashMap<String,ArrayList<TermForce> > arranging,int sized) {
+
+HashMap<String,ArrayList<TermForce> > select(HashMap<String,ArrayList<TermForce> > arranging,int sized) {
    HashMap<String,ArrayList<TermForce> > termeSize = new HashMap<String,ArrayList<TermForce> >();
     //respect same order for all
     for (String label : arranging.keySet()) {
       ArrayList<TermForce> labeled=arranging.get(label);
-      List<TermForce> labelClone=new ArrayList();
-      labelClone.addAll(labeled);
-      Collections.sort(labelClone,
-        new Comparator<TermForce>(){
-          public int compare(TermForce o1, TermForce o2){
-            return o1.compareTo(o2);
-        }
-      });
       ArrayList<TermForce> labelCloneFilter=new ArrayList();
-      counter=0;
+      int counter=0;
       println("oo4");
-      for(int i=0;i<labelClone.size();i++){
-            TermForce force=labelClone.get(i);
+      for(int i=0;i<labeled.size();i++){
+            TermForce force=labeled.get(i);
             if(counter++<sized){
               labelCloneFilter.add(force);
               println(force.value);
@@ -153,10 +156,28 @@ HashMap<String,ArrayList<TermForce> > sortAndOrder(HashMap<String,ArrayList<Term
      
     }
     return termeSize;
+}  
+HashMap<String,ArrayList<TermForce> > sortAndOrder(HashMap<String,ArrayList<TermForce> > arranging) {
+   HashMap<String,ArrayList<TermForce> > termeSize = new HashMap<String,ArrayList<TermForce> >();
+    //respect same order for all
+    for (String label : arranging.keySet()) {
+      ArrayList<TermForce> labeled=arranging.get(label);
+      ArrayList<TermForce> labelClone=new ArrayList();
+      labelClone.addAll(labeled);
+      Collections.sort(labelClone,
+        new Comparator<TermForce>(){
+          public int compare(TermForce o1, TermForce o2){
+            return o1.compareTo(o2);
+        }
+      });
+      termeSize.put(label,labelClone);
+     
+    }
+    return termeSize;
 } 
       
 HashMap<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction){
-  
+    HashMap<String,Integer> colors=new HashMap();
     HashMap<String,ArrayList<TermForce> > termeSize = new HashMap<String,ArrayList<TermForce> >();
     HashMap<String,MaxSize> maxim=new HashMap();
     termeSize.put("Base",new ArrayList<TermForce>());
@@ -181,7 +202,9 @@ HashMap<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction)
     if(max.min>size){
       max.min=size;
     }
-    termeSize.get(BASE).add(new TermForce(name,size,(int)random(width),(int)random(height),max));
+    TermForce ttForce=new TermForce(name,size,(int)random(width),(int)random(height),max);
+    colors.put(ttForce.name,ttForce.colori);
+    termeSize.get(BASE).add(ttForce);
     for (String label : correction.getLabels()) {
        float sizedLabel=0.0;
        for (int k=1;k<essai.getColumnCount();k++){
@@ -194,6 +217,8 @@ HashMap<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction)
       if(maxim.get(label).min>sizedLabel){
         maxim.get(label).min=sizedLabel;
       }
+       ttForce=new TermForce(name,sizedLabel,(int)random(width),(int)random(height),maxim.get(label));
+       ttForce.colori=colors.get(ttForce.name);
        termeSize.get(label).add(new TermForce(name,sizedLabel,(int)random(width),(int)random(height),maxim.get(label)));
     }
     }
@@ -202,28 +227,7 @@ HashMap<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction)
   return termeSize;      
 }
 
-ArrayList<TermForce> makeSimple (Table essai){
-    int nbColumn=essai.getColumnCount()-1;
-    
-    float []correction=new float[essai.getColumnCount()-1];
-    for (int i=0;i<nbColumn;i++){
-      correction[i]=1.0;
-    }
-    return make(essai,correction);
-} 
-ArrayList<TermForce> make (Table essai,float []correction){     
-  ArrayList<TermForce> termeSize = new ArrayList<TermForce>();
-  for (TableRow row : essai.rows()) {
-    String name = row.getString(0);
-    float size=0.0;
-    for (int k=1;k<essai.getColumnCount();k++){
-      size+=row.getFloat(k)*correction[k-1];
-    }
-    println(name+":"+size);
-    termeSize.add(new TermForce(name,size,(int)random(width),(int)random(height),new MaxSize()));
-  }
-  return termeSize;
-}
+
 
 class MaxSize{
   
@@ -246,7 +250,7 @@ class TermForce  {
   color colori;
   int x,y;
   float tileW,tileH;
-  MaxSize size;
+  public MaxSize size;
   public TermForce(String name,float value,int x,int y,MaxSize max){
     this.name=name;
     this.value=value;
@@ -259,37 +263,40 @@ class TermForce  {
   }
   
   public void calculateValue(){  
-    fontsize=max(size.fontMin,min(size.fontMax,map(value,size.min,size.max,size.fontMin,size.fontMax)));
+    fontsize=max(size.fontMin,min(size.fontMax,map( value,size.min,size.max,size.fontMin,size.fontMax)));
   }  
   
   public void calculateDisplay(){
     textSize(fontsize);
-    tileW=textWidth(name);
-    tileH=textAscent();
+    tileW=textWidth(name)+1;
+    tileH=textAscent()+1;
   }
   
   public void display(){
 
-
+    calculateValue();
        textSize(fontsize);
              fill(colori);
-        text(name,x,y);
+        text(name,x-tileW*0.5,y+tileH*0.5);
          
   }
   
   public boolean intersect(TermForce force){
-    float left1=x;
-    float right1= x +tileW;
-    float top1=y-tileH;
-    float bot1=y;
+    float left1=x -tileW*0.5;
+    float right1= x +tileW*0.5;
+    float top1=y-tileH*0.5;
+    float bot1=y+tileH*0.5;
     
-    float left2=force.x;
-    float right2= force.x +force.tileW;
-    float top2=force.y-force.tileH;
-    float bot2=force.y;
+    float left2=force.x-force.tileW*0.5;
+    float right2= force.x +force.tileW*0.5;
+    float top2=force.y-force.tileH*0.5;
+    float bot2=force.y+force.tileH*0.5;
     
     return !(right1<left2||right2<left1||bot1<top2||bot2<top1);
     
+  }
+  public boolean checkLimit(int startX,int startY,int endX,int endY){
+    return x -tileW*0.5<startX || x +tileW*0.5>endX || startY>y+tileH*0.5 || endY<y-tileH*0.5;
   }
   
   public int compareTo(TermForce anotherInstance) {
