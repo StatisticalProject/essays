@@ -8,15 +8,26 @@ ArrayList<TermForce> actu;
 Model [] modeles= new Model[8];
 String BASE="Base";
 Table tableEssay1;
+Table tableEssay2;
+Table tableEssay3;
+Table tableEssay4;
+Table tableEssay5;
+Table tableEssay6;
+Table tableEssay7;
+Table tableEssay8;
+boolean loading=false;
+int xbase=100,ybase=100;
+int indiceActu=4;
+String labelActuel=BASE;
 void setup(){
 	tableEssay1 = loadTable("TermConcept_Essay1.csv");
-	Table tableEssay2 = loadTable("TermConcept_Essay2.csv");
-	Table tableEssay3 = loadTable("TermConcept_Essay3.csv");
-	Table tableEssay4 = loadTable("TermConcept_Essay4.csv");
-	Table tableEssay5 = loadTable("TermConcept_Essay5.csv");
-	Table tableEssay6 = loadTable("TermConcept_Essay6.csv");
-	Table tableEssay7 = loadTable("TermConcept_Essay7.csv");
-	Table tableEssay8 = loadTable("TermConcept_Essay8.csv");
+	tableEssay2 = loadTable("TermConcept_Essay2.csv");
+	tableEssay3 = loadTable("TermConcept_Essay3.csv");
+	tableEssay4 = loadTable("TermConcept_Essay4.csv");
+	tableEssay5 = loadTable("TermConcept_Essay5.csv");
+	tableEssay6 = loadTable("TermConcept_Essay6.csv");
+	tableEssay7 = loadTable("TermConcept_Essay7.csv");
+	tableEssay8 = loadTable("TermConcept_Essay8.csv");
         Table modelLoad = loadTable("ModelTest.csv");
         
         HashMap<String,Float> essai = new HashMap<String,Float>();
@@ -73,7 +84,7 @@ void setup(){
           actu=complete.get(""+maxiXounter);
           maxiXounter++; 
         }
-        println("fff" +maxiXounter);
+        
         
         
       }
@@ -82,13 +93,53 @@ void setup(){
         for (TermForce term:actu){
           term.display();
         }
+        if (mousePressed) {
+          calculate(mouseX,mouseY,750,10);
+        }
         
-        
+        drawButtons();
 
-
+        if(loading){ 
+          writeButton("Loading",width/2,height/2,true,true,sizeButtonW, sizeButtonH,18);
+        }
         
-      
+        drawSizer();
       }
+      
+      int actualEssay=1;
+void drawSizer(){
+      stroke(1);
+        String sizeStr[]=new String[]{"10","50","100","250","500"};
+        for (int i=0;i<5;i++){
+          int lin=ybase+20+28*i;
+          line(xbase-5, lin,xbase+15, lin);
+          textSize(10);
+          text(sizeStr[i],xbase+18,lin+2);
+        }
+        fill(0);
+        rect(xbase, ybase, 10, 150, 7);
+        fill(255);
+        rect(xbase-5, ybase+20+28*indiceActu-5, 20, 10, 7);
+        
+
+}
+void drawButtons(){
+  for (int y=1;y<9;y++){
+    drawButton(y,actualEssay==y);
+  }  
+  int sizeButtonW=70;
+int sizeButtonH=40;
+   int y=0;
+   int x=5;
+  for (String label : complete.keySet()){
+    if (y>700){
+      y=0;x+=sizeButtonW/2+2;
+    }
+    y+=sizeButtonH+2;
+    
+    writeButton(label,x,y,true,overRect(x,y,sizeButtonW/2,sizeButtonH),sizeButtonW/2, sizeButtonH,11);
+  }
+}      
 void calculateFontSize(HashMap<String,ArrayList<TermForce> > arranging) {
   for (String label : arranging.keySet()) {
       ArrayList<TermForce> bases=arranging.get(label);
@@ -97,10 +148,29 @@ void calculateFontSize(HashMap<String,ArrayList<TermForce> > arranging) {
   
   
 }
+int windowSize=30,beginWindow=10,endWindows=beginWindow+windowSize;
+int loopH=1;
+void calculate(int mouseX,int mouseY,int x,int y){
+  if (mouseX<x){
+    return;
+  }
+  beginWindow=(mouseY-y)/loopH;
+  
+  if (beginWindow<0){
+    beginWindow=0;
+  }
+  endWindows=beginWindow+windowSize;
+  if(endWindows>=completeActu.get(BASE).size())
+  {
+    endWindows=completeActu.get(BASE).size();
+    beginWindow=endWindows-windowSize;
+  }
+}
+
 void arrange(HashMap<String,ArrayList<TermForce> > arranging) {
      
     float cx=width/2,cy=height/2;
-    float R=0.0,dR=0.002,theta=0.0,dTheta=0.08;
+    float R=0.0,dR=0.0008,theta=0.0,dTheta=0.04;
     for (String label : arranging.keySet()) {
       R=0.0;
       theta=0.0;
@@ -143,15 +213,14 @@ HashMap<String,ArrayList<TermForce> > select(HashMap<String,ArrayList<TermForce>
       ArrayList<TermForce> labeled=arranging.get(label);
       ArrayList<TermForce> labelCloneFilter=new ArrayList();
       int counter=0;
-      println("oo4");
+      
       for(int i=0;i<labeled.size();i++){
             TermForce force=labeled.get(i);
             if(counter++<sized){
               labelCloneFilter.add(force);
-              println(force.value);
             }
       }
-      println("oo");
+      
       termeSize.put(label,labelCloneFilter);
      
     }
@@ -242,7 +311,6 @@ class TermForceComparator implements Comparator<TermForce>{
     return o1.compareTo(o2);
   }
 }
-
 class TermForce  {
   String name;
   float value;
@@ -307,6 +375,8 @@ class TermForce  {
   
   
 }
+int sizeButtonW=70;
+int sizeButtonH=40;
 
 class Model{
   HashMap <String,ArrayList<Float>> map;
@@ -329,4 +399,106 @@ class Model{
   float getLabel(String label,int column){
     return map.get(label).get(column);
   } 
+}
+
+void drawButton(int i,boolean sel){
+  int x=110+(i-1)*sizeButtonW+(i-1)*5;
+  writeButton("Essai "+i,x,40,!sel,overRect(x,40,sizeButtonW,sizeButtonH),sizeButtonW, sizeButtonH,18);
+}
+void writeButton(String name,int x,int y,boolean selected,boolean median,int sizeBonW,int sizeBonH,int decay){
+    if(selected){
+      if(median){
+        fill(200);
+      }else{
+        fill(255);
+      }
+    }else{
+      if(median){
+        fill(120);
+      }else{
+        fill(160);
+      }
+    }
+    stroke(1);
+    rect(x, y, sizeBonW, sizeBonH, 7);
+    fill(0);
+    textSize(12);
+    translate(x, y);
+    text(name,decay,25);
+    translate(-x, -y);
+}
+boolean sortActual=false;
+
+void mousePressed() {
+  for (int y=1;y<9;y++){
+    int x=110+(y-1)*sizeButtonW+(y-1)*5;
+    if(overRect(x,40,sizeButtonW,sizeButtonH)){
+      sortActual=false;
+      loading=true;
+      actualEssay=y;
+      if(y==1){
+        completeActu=makeComplex (tableEssay1,modeles[0]);
+        
+      }
+      if(y==2){
+        completeActu=makeComplex (tableEssay2,modeles[1]);
+      }
+      if(y==3){
+        completeActu=makeComplex (tableEssay3,modeles[2]);
+      }
+      if(y==4){
+        completeActu=makeComplex (tableEssay4,modeles[3]);
+      }
+      if(y==5){
+        completeActu=makeComplex (tableEssay5,modeles[4]);
+      }
+      if(y==6){
+        completeActu=makeComplex (tableEssay6,modeles[5]);
+      }
+      if(y==7){
+        completeActu=makeComplex (tableEssay7,modeles[6]);
+      }
+      if(y==8){
+        completeActu=makeComplex (tableEssay8,modeles[7]);
+      }
+      completeActu=sortAndOrder(completeActu);
+        complete=select(sortAndOrder(completeActu),500);
+        calculateFontSize(complete);
+        arrange(complete);
+        actu=complete.get(BASE);
+        
+      loading=false;
+    }
+  }
+  int y=0;
+  int x=5;
+  for (String label : complete.keySet()){
+    if (y>700){
+      y=0;x+=sizeButtonW/2+2;
+    }
+    y+=sizeButtonH+2;
+    if(overRect(x,y,sizeButtonW/2,sizeButtonH)){
+      actu=complete.get(label);
+      labelActuel=label;
+    }
+  }
+  int sizer[]=new int[]{10,50,100,250,500};
+  for (int i=0;i<5;i++){
+    int lin=ybase+20+28*i;
+      if(overRect(xbase-15,lin-15,xbase+15,lin+15)){
+        indiceActu=i;
+        complete=select(completeActu,sizer[i]);
+        actu=complete.get(labelActuel);        
+      }      
+  }
+   
+}
+
+boolean overRect(int x, int y, int width, int height)  {
+  if (mouseX >= x && mouseX <= x+width && 
+      mouseY >= y && mouseY <= y+height) {
+    return true;
+  } else {
+    return false;
+  }
 }
