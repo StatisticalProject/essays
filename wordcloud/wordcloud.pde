@@ -16,7 +16,7 @@ Table tableEssay6;
 Table tableEssay7;
 Table tableEssay8;
 boolean loading=false;
-int xbase=100,ybase=100;
+int xbase=100,ybase=101;
 int indiceActu=4;
 String labelActuel=BASE;
 void setup(){
@@ -100,7 +100,7 @@ void setup(){
         drawButtons();
 
         if(loading){ 
-          writeButton("Loading",width/2,height/2,true,true,sizeButtonW, sizeButtonH,18);
+          writeButton("Loading",width/2,height/2,true,true,sizeButtonW, sizeButtonH,18,25,12);
         }
         
         drawSizer();
@@ -120,7 +120,7 @@ void drawSizer(){
         rect(xbase, ybase, 10, 150, 7);
         fill(255);
         rect(xbase-5, ybase+20+28*indiceActu-5, 20, 10, 7);
-        
+        writeButton("Arranger",xbase-20,ybase-17,true,overRect(xbase-20,ybase-17,50,15),50,15,5,12,10);
 
 }
 void drawButtons(){
@@ -137,7 +137,7 @@ int sizeButtonH=40;
     }
     y+=sizeButtonH+2;
     
-    writeButton(label,x,y,true,overRect(x,y,sizeButtonW/2,sizeButtonH),sizeButtonW/2, sizeButtonH,11);
+    writeButton(label,x,y,true,overRect(x,y,sizeButtonW/2,sizeButtonH),sizeButtonW/2, sizeButtonH,11,25,12);
   }
 }      
 void calculateFontSize(HashMap<String,ArrayList<TermForce> > arranging) {
@@ -403,9 +403,9 @@ class Model{
 
 void drawButton(int i,boolean sel){
   int x=110+(i-1)*sizeButtonW+(i-1)*5;
-  writeButton("Essai "+i,x,40,!sel,overRect(x,40,sizeButtonW,sizeButtonH),sizeButtonW, sizeButtonH,18);
+  writeButton("Essai "+i,x,40,!sel,overRect(x,40,sizeButtonW,sizeButtonH),sizeButtonW, sizeButtonH,18,25,12);
 }
-void writeButton(String name,int x,int y,boolean selected,boolean median,int sizeBonW,int sizeBonH,int decay){
+void writeButton(String name,int x,int y,boolean selected,boolean median,int sizeBonW,int sizeBonH,int decayx,int decayy,int fontsize){
     if(selected){
       if(median){
         fill(200);
@@ -422,9 +422,9 @@ void writeButton(String name,int x,int y,boolean selected,boolean median,int siz
     stroke(1);
     rect(x, y, sizeBonW, sizeBonH, 7);
     fill(0);
-    textSize(12);
+    textSize(fontsize);
     translate(x, y);
-    text(name,decay,25);
+    text(name,decayx,decayy);
     translate(-x, -y);
 }
 boolean sortActual=false;
@@ -490,6 +490,12 @@ void mousePressed() {
         complete=select(completeActu,sizer[i]);
         actu=complete.get(labelActuel);        
       }      
+  }
+  
+  if(overRect(xbase-20,ybase-17,50,15)){
+    complete=select(completeActu,sizer[indiceActu]);
+    calculateFontSize(complete);
+    arrange(complete);
   }
    
 }
