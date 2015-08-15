@@ -18,7 +18,7 @@ Table tableEssay8;
 boolean loading=false;
 int xbase=100,ybase=101;
 int indiceActu=4;
-String labelActuel=BASE;
+String labelActuel="0";
 void setup(){
 	tableEssay1 = loadTable("TermConcept_Essay1.csv");
 	tableEssay2 = loadTable("TermConcept_Essay2.csv");
@@ -120,13 +120,13 @@ int sizeButtonH=40;
     }
     y+=sizeButtonH+2;
     
-    writeButton(Integer.toString(i),x,y,true,overRect(x,y,sizeButtonW/2,sizeButtonH),sizeButtonW/2, sizeButtonH,11,25,12);
+    writeButton(Integer.toString(i),x,y,!labelActuel.equals(Integer.toString(i)),overRect(x,y,sizeButtonW/2,sizeButtonH),sizeButtonW/2, sizeButtonH,11,25,12);
   }
 }      
 void calculateFontSize(Map<String,ArrayList<TermForce> > arranging) {
   for (String label : arranging.keySet()) {
       ArrayList<TermForce> bases=arranging.get(label);
-      bases.get(0).size.fontMax=max(11,map(bases.size(),500,1,14,36));
+      bases.get(0).size.fontMax=max(40,map(bases.size(),500,1,40,50));
   }
   
   
@@ -153,13 +153,16 @@ void calculate(int mouseX,int mouseY,int x,int y){
 void arrange(Map<String,ArrayList<TermForce> > arranging) {
      
     float cx=width/2,cy=height/2;
-    float R=0.0,dR=0.0008,theta=0.0,dTheta=0.04;
+    float R=0.0,dR=0.2,theta=0.0,dTheta=0.1;
     for (String label : arranging.keySet()) {
       R=0.0;
       theta=0.0;
       ArrayList<TermForce>  bases = arranging.get(label);
       ArrayList<TermForce> arrayCalcul=new ArrayList();
       for(TermForce arrange:bases){
+              R=0.0;
+        theta=random(100)/100;
+
         arrange.calculateValue();
         arrange.calculateDisplay();
         do{
@@ -308,7 +311,7 @@ class MaxSize{
   float max=0.0;
   float min=99999.9;
   float fontMax=10;
-  float fontMin=5;
+  float fontMin=8;
 }
 
 class TermForceComparator implements Comparator<TermForce>{
@@ -435,6 +438,8 @@ void writeButton(String name,int x,int y,boolean selected,boolean median,int siz
 boolean sortActual=false;
 
 void mousePressed() {
+  int sizer[]=new int[]{10,50,100,250,500};
+  
   for (int y=1;y<9;y++){
     int x=110+(y-1)*sizeButtonW+(y-1)*5;
     if(overRect(x,40,sizeButtonW,sizeButtonH)){
@@ -467,11 +472,11 @@ void mousePressed() {
         completeActu=makeComplex (tableEssay8,modeles[7]);
       }
       completeActu=sortAndOrder(completeActu);
-        complete=select(sortAndOrder(completeActu),500);
+        complete=select(sortAndOrder(completeActu),sizer[indiceActu]);
         calculateFontSize(complete);
         arrange(complete);
         actu=complete.get("0");
-        
+      labelActuel="0";        
       loading=false;
     }
   }
@@ -491,7 +496,6 @@ void mousePressed() {
       labelActuel=label;
     }
   }
-  int sizer[]=new int[]{10,50,100,250,500};
   for (int i=0;i<5;i++){
     int lin=ybase+20+28*i;
       if(overRect(xbase-15,lin-15,xbase+15,lin+15)){
