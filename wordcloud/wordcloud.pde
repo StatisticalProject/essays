@@ -37,9 +37,9 @@ void setup(){
 // Putting key-value pairs in the HashMap        
         for (TableRow row : modelLoad.rows()) {
             String name = row.getString(0);
-            String label = row.getString(1);
+            String label = Integer.toString(Integer.parseInt(row.getString(1))+1);
             ArrayList<Float> list= new ArrayList();
-            for (int k=2;k<33;k++)
+            for (int k=2;k<32;k++)
             {
               list.add(row.getFloat(k));
             }
@@ -232,7 +232,7 @@ Map<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction){
     HashMap<String,Integer> colors=new HashMap();
     TreeMap<String,ArrayList<TermForce> > termeSize = new TreeMap<String,ArrayList<TermForce> >();
     HashMap<String,MaxSize> maxim=new HashMap();
-    String labeli=Integer.toString(correction.getLabels().size());
+    String labeli="0";
     maxim.put(labeli,new MaxSize());
     termeSize.put(labeli,new ArrayList<TermForce>());
     println(""+correction.getLabels().size());
@@ -264,7 +264,8 @@ Map<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction){
     //termeSize.get(Integer.toString(correction.getLabels().size())).add(ttForce);
     int labelCount=0;
     float lastLabel=0.0;
-    for (String label : correction.getLabels()) {
+    for (String labele : correction.getLabels()) {
+       String label=labele;
        float sizedLabel=0.0;
        for (int k=1;k<essai.getColumnCount();k++){
         sizedLabel+=row.getFloat(k)*correction.getLabel(label,k-1);
@@ -287,8 +288,8 @@ Map<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction){
        
        
     }
-    println(""+(0-lastLabel));
-    ttForce=new TermForce(name,0-lastLabel,(int)random(width),(int)random(height),max);
+    println(""+(size));
+    ttForce=new TermForce(name,size,(int)random(width),(int)random(height),max);
     ttForce.colori=colors.get(ttForce.name);
     termeSize.get(labeli).add(ttForce);
     
