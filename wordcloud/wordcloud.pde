@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
+import java.util.*;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Collections;
@@ -66,8 +66,8 @@ void setup(){
         
       
       }
-      HashMap<String,ArrayList<TermForce> > complete;
-      HashMap<String,ArrayList<TermForce> > completeActu;
+      Map<String,ArrayList<TermForce> > complete;
+      Map<String,ArrayList<TermForce> > completeActu;
       int maxiXounter=1;
       int maxi=500;
       void keyPressed() {
@@ -131,16 +131,16 @@ void drawButtons(){
 int sizeButtonH=40;
    int y=0;
    int x=5;
-  for (String label : complete.keySet()){
+  for (int i=0;i<complete.keySet().size();i++){
     if (y>700){
       y=0;x+=sizeButtonW/2+2;
     }
     y+=sizeButtonH+2;
     
-    writeButton(label,x,y,true,overRect(x,y,sizeButtonW/2,sizeButtonH),sizeButtonW/2, sizeButtonH,11,25,12);
+    writeButton(Integer.toString(i),x,y,true,overRect(x,y,sizeButtonW/2,sizeButtonH),sizeButtonW/2, sizeButtonH,11,25,12);
   }
 }      
-void calculateFontSize(HashMap<String,ArrayList<TermForce> > arranging) {
+void calculateFontSize(Map<String,ArrayList<TermForce> > arranging) {
   for (String label : arranging.keySet()) {
       ArrayList<TermForce> bases=arranging.get(label);
       bases.get(0).size.fontMax=max(11,map(bases.size(),500,1,14,36));
@@ -167,7 +167,7 @@ void calculate(int mouseX,int mouseY,int x,int y){
   }
 }
 
-void arrange(HashMap<String,ArrayList<TermForce> > arranging) {
+void arrange(Map<String,ArrayList<TermForce> > arranging) {
      
     float cx=width/2,cy=height/2;
     float R=0.0,dR=0.0008,theta=0.0,dTheta=0.04;
@@ -206,8 +206,8 @@ boolean check(ArrayList<TermForce> checks, TermForce toCheck){
   return false;
 }
 
-HashMap<String,ArrayList<TermForce> > select(HashMap<String,ArrayList<TermForce> > arranging,int sized) {
-   HashMap<String,ArrayList<TermForce> > termeSize = new HashMap<String,ArrayList<TermForce> >();
+Map<String,ArrayList<TermForce> > select(Map<String,ArrayList<TermForce> > arranging,int sized) {
+   Map<String,ArrayList<TermForce> > termeSize = new TreeMap<String,ArrayList<TermForce> >();
     //respect same order for all
     for (String label : arranging.keySet()) {
       ArrayList<TermForce> labeled=arranging.get(label);
@@ -226,8 +226,8 @@ HashMap<String,ArrayList<TermForce> > select(HashMap<String,ArrayList<TermForce>
     }
     return termeSize;
 }  
-HashMap<String,ArrayList<TermForce> > sortAndOrder(HashMap<String,ArrayList<TermForce> > arranging) {
-   HashMap<String,ArrayList<TermForce> > termeSize = new HashMap<String,ArrayList<TermForce> >();
+Map<String,ArrayList<TermForce> > sortAndOrder(Map<String,ArrayList<TermForce> > arranging) {
+   Map<String,ArrayList<TermForce> > termeSize = new TreeMap<String,ArrayList<TermForce> >();
     //respect same order for all
     for (String label : arranging.keySet()) {
       ArrayList<TermForce> labeled=arranging.get(label);
@@ -245,9 +245,9 @@ HashMap<String,ArrayList<TermForce> > sortAndOrder(HashMap<String,ArrayList<Term
     return termeSize;
 } 
       
-HashMap<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction){
+Map<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction){
     HashMap<String,Integer> colors=new HashMap();
-    HashMap<String,ArrayList<TermForce> > termeSize = new HashMap<String,ArrayList<TermForce> >();
+    TreeMap<String,ArrayList<TermForce> > termeSize = new TreeMap<String,ArrayList<TermForce> >();
     HashMap<String,MaxSize> maxim=new HashMap();
     termeSize.put("Base",new ArrayList<TermForce>());
     for (String label : correction.getLabels()) {
@@ -290,6 +290,8 @@ HashMap<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction)
        ttForce.colori=colors.get(ttForce.name);
        termeSize.get(label).add(new TermForce(name,sizedLabel,(int)random(width),(int)random(height),maxim.get(label)));
     }
+    //change Label
+     
     }
        
       
@@ -472,7 +474,11 @@ void mousePressed() {
   }
   int y=0;
   int x=5;
-  for (String label : complete.keySet()){
+  for (int i=0;i<complete.keySet().size();i++){
+    String label=Integer.toString(i-1);
+    if(i==0){
+      label=BASE;
+    }
     if (y>700){
       y=0;x+=sizeButtonW/2+2;
     }
