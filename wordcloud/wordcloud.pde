@@ -41,7 +41,7 @@ void setup(){
             ArrayList<Float> list= new ArrayList();
             for (int k=2;k<33;k++)
             {
-              list.add(row.getFloat(1));
+              list.add(row.getFloat(k));
             }
             if(name.equals("Essay1")){ modeles[0].put(label,list); }          
             if(name.equals("Essay2")){ modeles[1].put(label,list); }
@@ -60,7 +60,7 @@ void setup(){
         complete=select(sortAndOrder(completeActu),500);
         calculateFontSize(complete);
         arrange(complete);
-        actu=complete.get(BASE);
+        actu=complete.get("0");
         println(tableEssay1.getColumnCount());
         
         
@@ -70,24 +70,7 @@ void setup(){
       Map<String,ArrayList<TermForce> > completeActu;
       int maxiXounter=1;
       int maxi=500;
-      void keyPressed() {
-        complete=select(completeActu,maxi);
-        maxi-=50;
-        maxi=max(50,maxi);
-        calculateFontSize(complete);
-        arrange(complete);
-        if(maxiXounter>4){
-          actu=complete.get(BASE);
-          maxiXounter=1;
-        }
-        else{
-          actu=complete.get(""+maxiXounter);
-          maxiXounter++; 
-        }
-        
-        
-        
-      }
+      
       void draw(){
         background(255);
         for (TermForce term:actu){
@@ -160,9 +143,9 @@ void calculate(int mouseX,int mouseY,int x,int y){
     beginWindow=0;
   }
   endWindows=beginWindow+windowSize;
-  if(endWindows>=completeActu.get(BASE).size())
+  if(endWindows>=completeActu.get("0").size())
   {
-    endWindows=completeActu.get(BASE).size();
+    endWindows=completeActu.get("0").size();
     beginWindow=endWindows-windowSize;
   }
 }
@@ -249,10 +232,15 @@ Map<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction){
     HashMap<String,Integer> colors=new HashMap();
     TreeMap<String,ArrayList<TermForce> > termeSize = new TreeMap<String,ArrayList<TermForce> >();
     HashMap<String,MaxSize> maxim=new HashMap();
-    termeSize.put("Base",new ArrayList<TermForce>());
+    String labeli=Integer.toString(correction.getLabels().size());
+    maxim.put(labeli,new MaxSize());
+    termeSize.put(labeli,new ArrayList<TermForce>());
+    println(""+correction.getLabels().size());
     for (String label : correction.getLabels()) {
       termeSize.put(label,new ArrayList<TermForce>());
       maxim.put(label,new MaxSize());
+      println(""+label);
+    
     }
     MaxSize max= new MaxSize();
     
@@ -273,23 +261,37 @@ Map<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction){
     }
     TermForce ttForce=new TermForce(name,size,(int)random(width),(int)random(height),max);
     colors.put(ttForce.name,ttForce.colori);
-    termeSize.get(BASE).add(ttForce);
+    //termeSize.get(Integer.toString(correction.getLabels().size())).add(ttForce);
+    int labelCount=0;
+    float lastLabel=0.0;
     for (String label : correction.getLabels()) {
        float sizedLabel=0.0;
        for (int k=1;k<essai.getColumnCount();k++){
         sizedLabel+=row.getFloat(k)*correction.getLabel(label,k-1);
        }
-       sizedLabel=(float)Math.exp(sizedLabel)*size;
+       sizedLabel=(float)Math.exp(sizedLabel);
+       println("kb:"+(sizedLabel));
+       sizedLabel*=size;
        if(maxim.get(label).max<sizedLabel){
           maxim.get(label).max=sizedLabel;
       }
       if(maxim.get(label).min>sizedLabel){
         maxim.get(label).min=sizedLabel;
       }
+      lastLabel-=sizedLabel;
+      println("k:"+(sizedLabel));
        ttForce=new TermForce(name,sizedLabel,(int)random(width),(int)random(height),maxim.get(label));
        ttForce.colori=colors.get(ttForce.name);
-       termeSize.get(label).add(new TermForce(name,sizedLabel,(int)random(width),(int)random(height),maxim.get(label)));
+       termeSize.get(label).add(ttForce);
+       labelCount++;
+       
+       
     }
+    println(""+(0-lastLabel));
+    ttForce=new TermForce(name,0-lastLabel,(int)random(width),(int)random(height),max);
+    ttForce.colori=colors.get(ttForce.name);
+    termeSize.get(labeli).add(ttForce);
+    
     //change Label
      
     }
@@ -393,13 +395,13 @@ class Model{
   }
   float getAll(int column){
     float finVal=0.0;
-    for(ArrayList<Float> values:map.values()){
-      finVal+=values.get(column);
+    for(String label:map.keySet()){
+      finVal+=getLabel(label,column);
     }
     return finVal;
   } 
   float getLabel(String label,int column){
-    return map.get(label).get(column);
+       return map.get(label).get(column);
   } 
 }
 
@@ -467,7 +469,7 @@ void mousePressed() {
         complete=select(sortAndOrder(completeActu),500);
         calculateFontSize(complete);
         arrange(complete);
-        actu=complete.get(BASE);
+        actu=complete.get("0");
         
       loading=false;
     }
@@ -475,9 +477,9 @@ void mousePressed() {
   int y=0;
   int x=5;
   for (int i=0;i<complete.keySet().size();i++){
-    String label=Integer.toString(i-1);
+    String label=Integer.toString(i);
     if(i==0){
-      label=BASE;
+      label="0";
     }
     if (y>700){
       y=0;x+=sizeButtonW/2+2;
