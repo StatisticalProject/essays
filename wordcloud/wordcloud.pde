@@ -117,6 +117,7 @@ void drawButtons(){
 int sizeButtonH=40;
    int y=0;
    int x=5;
+   text("Note",10,35);
   for (int i=0;i<complete.keySet().size();i++){
     if (y>700){
       y=0;x+=sizeButtonW/2+2;
@@ -157,7 +158,8 @@ void calculate(int mouseX,int mouseY,int x,int y){
 void arrange(Map<String,ArrayList<TermForce> > arranging) {
      
     float cx=width/2,cy=height/2;
-    float R=0.0,dR=0.4,theta=0.0,dTheta=0.2;
+    float R=0.0,dR=1.0,theta=0.0,dTheta=0.05;
+    float Rnoise=0.0,dRnoise=1.5;
     for (String label : arranging.keySet()) {
       R=0.0;
       theta=0.0;
@@ -170,11 +172,13 @@ void arrange(Map<String,ArrayList<TermForce> > arranging) {
         arrange.calculateValue();
         arrange.calculateDisplay();
         do{
-          arrange.x=(int)(cx+R*cos(theta));
-          arrange.y=(int)(cy+R*sin(theta));
-          
+          float radd=theta+(customNoise(Rnoise)*200)-100;
+          arrange.x=(int)(cx+R*cos(radd));
+          arrange.y=(int)(cy+R*sin(radd));
+                    
           theta+=dTheta;
           R+=dR;
+          Rnoise+=dRnoise;
         }while(check(arrayCalcul,arrange));
         arrayCalcul.add(arrange);
       }
@@ -182,7 +186,9 @@ void arrange(Map<String,ArrayList<TermForce> > arranging) {
     }
 
 }
-
+float customNoise(float value){
+    return noise(value);
+}
 boolean check(ArrayList<TermForce> checks, TermForce toCheck){
   if(toCheck.checkLimit(0,0,width,height)){
     return true;
