@@ -62,7 +62,7 @@ void draw(){
   clear();
   sortAllLine();
   background(240);
-  int globalStartH=90;
+  int globalStartH=150;
   drawPart(0,globalStartH);
   drawAll(750,globalStartH);
   
@@ -117,12 +117,12 @@ void drawButtons(){
   for (int y=1;y<9;y++){
     drawButton(y,actualEssay==y);
   }  
-  int x=110+(10)*sizeButtonW+10;
-  writeButton("DBScan",x,40,true,overRect(x,40,sizeButtonW,sizeButtonH));
+  int x=110+(10)*sizeButtonW;
+  writeButton("Similaire",x,20,true,overRect(x,20,sizeButtonW,sizeButtonH));
 }
 void drawButton(int i,boolean sel){
   int x=110+(i-1)*sizeButtonW+(i-1)*5;
-  writeButton("Essai "+i,x,40,!sel,overRect(x,40,sizeButtonW,sizeButtonH));
+  writeButton("Essai "+i,x,20,!sel,overRect(x,20,sizeButtonW,sizeButtonH));
 }
 void writeButton(String name,int x,int y,boolean selected,boolean median){
     if(selected){
@@ -253,13 +253,16 @@ Table exchangeLines(Table tableIn,int index1,int index2){
 int windowSize=30,beginWindow=10,endWindows=beginWindow+windowSize;
 
 void drawAll(int xStart,int xEnd){
+  
   noStroke();
   pushMatrix();
   int pixelsizeH=loopH;
   int pixelsizeW=6;
    translate(xStart, xEnd);
    int j=0;
+   int column=30;
   for (TableRow row : actualTableEssay.rows()) {
+    column=row.getColumnCount();
     j++;
     if(j==endWindows){
       noFill();
@@ -283,6 +286,19 @@ void drawAll(int xStart,int xEnd){
     translate(-pixelsizeW*(row.getColumnCount()-1), 0);
     
   }
+  stroke(1);fill(0);
+  translate(-630,-500);
+  textAlign(LEFT);
+  for(int i=0;i<30;i++){
+     translate(i*(pixelsizeW*3.32),0);
+    rotate(5*PI/3);
+    //translate(500,-200);
+    text("Concetp "+i, 0, 0);
+    rotate(-5*PI/3);
+    translate(-i*(pixelsizeW*3.32),0);
+  
+  }
+  textAlign(RIGHT);
   popMatrix();
 }
 
