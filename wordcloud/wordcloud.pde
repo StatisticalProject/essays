@@ -19,6 +19,9 @@ boolean loading=false;
 int xbase=100,ybase=101;
 int indiceActu=4;
 String labelActuel="0";
+int selectedFontMax[]=new int []{33,30,30,25,22};
+int selectedFontMin[]=new int []{22,18,15,11,9};
+
 void setup(){
 	tableEssay1 = loadTable("TermConcept_Essay1.csv");
 	tableEssay2 = loadTable("TermConcept_Essay2.csv");
@@ -126,7 +129,8 @@ int sizeButtonH=40;
 void calculateFontSize(Map<String,ArrayList<TermForce> > arranging) {
   for (String label : arranging.keySet()) {
       ArrayList<TermForce> bases=arranging.get(label);
-      bases.get(0).size.fontMax=max(40,map(bases.size(),500,1,40,50));
+      bases.get(0).size.fontMax=selectedFontMax[indiceActu];
+      bases.get(0).size.fontMin=selectedFontMin[indiceActu];//max(40,map(bases.size(),500,1,40,50));
   }
   
   
@@ -153,7 +157,7 @@ void calculate(int mouseX,int mouseY,int x,int y){
 void arrange(Map<String,ArrayList<TermForce> > arranging) {
      
     float cx=width/2,cy=height/2;
-    float R=0.0,dR=0.2,theta=0.0,dTheta=0.1;
+    float R=0.0,dR=0.4,theta=0.0,dTheta=0.2;
     for (String label : arranging.keySet()) {
       R=0.0;
       theta=0.0;
@@ -238,11 +242,9 @@ Map<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction){
     String labeli="0";
     maxim.put(labeli,new MaxSize());
     termeSize.put(labeli,new ArrayList<TermForce>());
-    println(""+correction.getLabels().size());
     for (String label : correction.getLabels()) {
       termeSize.put(label,new ArrayList<TermForce>());
       maxim.put(label,new MaxSize());
-      println(""+label);
     
     }
     MaxSize max= new MaxSize();
@@ -264,9 +266,10 @@ Map<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction){
     }
     TermForce ttForce=new TermForce(name,size,(int)random(width),(int)random(height),max);
     colors.put(ttForce.name,ttForce.colori);
-    //termeSize.get(Integer.toString(correction.getLabels().size())).add(ttForce);
-    int labelCount=0;
-    float lastLabel=0.0;
+    ttForce=new TermForce(name,size,(int)random(width),(int)random(height),max);
+    ttForce.colori=colors.get(ttForce.name);
+    termeSize.get(labeli).add(ttForce);
+
     for (String labele : correction.getLabels()) {
        String label=labele;
        float sizedLabel=0.0;
@@ -274,7 +277,6 @@ Map<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction){
         sizedLabel+=row.getFloat(k)*correction.getLabel(label,k-1);
        }
        sizedLabel=(float)Math.exp(sizedLabel);
-       println("kb:"+(sizedLabel));
        sizedLabel*=size;
        if(maxim.get(label).max<sizedLabel){
           maxim.get(label).max=sizedLabel;
@@ -282,21 +284,12 @@ Map<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction){
       if(maxim.get(label).min>sizedLabel){
         maxim.get(label).min=sizedLabel;
       }
-      lastLabel-=sizedLabel;
-      println("k:"+(sizedLabel));
        ttForce=new TermForce(name,sizedLabel,(int)random(width),(int)random(height),maxim.get(label));
        ttForce.colori=colors.get(ttForce.name);
        termeSize.get(label).add(ttForce);
-       labelCount++;
        
        
     }
-    println(""+(size));
-    ttForce=new TermForce(name,size,(int)random(width),(int)random(height),max);
-    ttForce.colori=colors.get(ttForce.name);
-    termeSize.get(labeli).add(ttForce);
-    
-    //change Label
      
     }
        
