@@ -81,11 +81,12 @@ void draw(){
     /* si un click est fait on cherche l'interaction*/
     calculate(mouseX,mouseY,750,globalStartH);
   }
- 
+ /* on dessine les boutons*/
   drawButtons();
 }
-
+/* action de click*/
 void mousePressed() {
+  /* cherche si il y a une interaction avec les boutons de selection des essais*/ 
   for (int y=1;y<9;y++){
     int x=110+(y-1)*sizeButtonW+(y-1)*5;
     if(overRect(x,40,sizeButtonW,sizeButtonH)){
@@ -117,6 +118,7 @@ void mousePressed() {
       }
     }
   }
+  /* click sur le bouton de similarite*/
   int x=110+(10)*sizeButtonW+10;
   if(overRect(x,40,sizeButtonW,sizeButtonH)){
     sortActual=!sortActual;
@@ -124,18 +126,22 @@ void mousePressed() {
     actualIndexSort=0;
   }  
 }
-
+/* dessin des boutons*/
 void drawButtons(){
+  /* on dessine chaque bouton des essai*/
   for (int y=1;y<9;y++){
     drawButton(y,actualEssay==y);
   }  
   int x=110+(10)*sizeButtonW;
+  /* on creer le bouton de similarite*/
   writeButton("Similaire",x,20,true,overRect(x,20,sizeButtonW,sizeButtonH));
 }
+/* dessine un bouton d'essai*/
 void drawButton(int i,boolean sel){
   int x=110+(i-1)*sizeButtonW+(i-1)*5;
   writeButton("Essai "+i,x,20,!sel,overRect(x,20,sizeButtonW,sizeButtonH));
 }
+/* on dessine un bouton depuis ses attributs*/
 void writeButton(String name,int x,int y,boolean selected,boolean median){
     if(selected){
       if(median){
@@ -157,7 +163,7 @@ void writeButton(String name,int x,int y,boolean selected,boolean median){
     text(name,58,25);
     translate(-x, -y);
 }
-
+/* essaie de tri des donnees*/
 void sortAllLine(){
   if(!sortActual)
   {
@@ -222,7 +228,7 @@ void sortAllLine(){
   }
   
 }
-
+/* cherche si il y a interaction entre souris et coordonnee pour un bouton*/
 void calculate(int mouseX,int mouseY,int x,int y){
   if (mouseX<x){
     return;
@@ -241,7 +247,7 @@ void calculate(int mouseX,int mouseY,int x,int y){
 }
 
 
-
+/* echange deux ligne d'un essai*/
 Table exchangeLines(Table tableIn,int index1,int index2){
   if(index1>=tableIn.getRowCount()){
     return tableIn;
@@ -263,7 +269,7 @@ Table exchangeLines(Table tableIn,int index1,int index2){
 }
 
 int windowSize=30,beginWindow=10,endWindows=beginWindow+windowSize;
-
+/* dessine la totalite un pixel par valeur*/
 void drawAll(int xStart,int xEnd){
   
   noStroke();
@@ -314,7 +320,7 @@ void drawAll(int xStart,int xEnd){
   popMatrix();
 }
 
-
+/* dessine le zoom de chaque point 20x20 */
 void drawPart(int xStart,int xEnd){
   int pixelsizeH=20;
   int pixelsizeW=20;
@@ -349,13 +355,14 @@ void drawPart(int xStart,int xEnd){
    
   
 }
-
+/* transform la valeur en index pour determiner la couleur*/
 int calculateSpace(float value){
   int maximum=9;
   int minimum=0;
   return min(maximum,max(minimum,(int)map(value, -0.01, 0.01,minimum, maximum)));
 }
 
+/* cherche l interaction entre le bouton et les coordonnees*/
 boolean overRect(int x, int y, int width, int height)  {
   if (mouseX >= x && mouseX <= x+width && 
       mouseY >= y && mouseY <= y+height) {
