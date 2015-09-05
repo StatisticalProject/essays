@@ -33,6 +33,7 @@ int nbChange=0;
 /* Setup de la demo */
 void setup() {
   size(1024, 768);
+  /* on charge tous les essays */
   tableEssay1 = loadTable("TermConcept_Essay1.csv");
   tableEssay2 = loadTable("TermConcept_Essay2.csv");
   tableEssay3 = loadTable("TermConcept_Essay3.csv");
@@ -42,6 +43,7 @@ void setup() {
   tableEssay7 = loadTable("TermConcept_Essay7.csv");
   tableEssay8 = loadTable("TermConcept_Essay8.csv");
   actualTableEssay=tableEssay1;
+  /* on charge les couleurs*/
   inside[0]=color(247,252,253);
   inside[1]=color(229,245,249);
   inside[2]=color(204,236,230);
@@ -53,28 +55,22 @@ void setup() {
   inside[8]=color(0,68,27);
   inside[9]=color(33,102,172);
   inside[10]=color(5,48,97);
-  
-  println(actualTableEssay.getRowCount() + " total rows in table"); 
-
-  for (TableRow row : actualTableEssay.rows()) {
-    
-    int id = row.getInt(1);
-    String species = row.getString(2);
-    String name = row.getString(0);
-    
-  }
+  /* on imprime le nombre de ligne*/
   println(actualTableEssay.getRowCount() + " total rows in table"); 
   finish=false;
   frameRate(300) ;
 
-  
 }
 
+/* on dessine */
 void draw(){
-  
+  /* on nettoie l ecran*/
   clear();
+  /* on tri les lignes*/
   sortAllLine();
+  /* on color l arriere plan*/
   background(240);
+  /* demarage des element en y*/
   int globalStartH=150;
   drawPart(0,globalStartH);
   drawAll(750,globalStartH);
