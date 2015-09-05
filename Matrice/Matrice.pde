@@ -15,14 +15,22 @@ int actualIndexSort=0;
 boolean finish=false;
 /* tableau des couleurs */
 color []inside = new color[11];
+
 int column=1;
 int loopH=1;
+/* taille du bouton */
 int sizeButtonW=70;
 int sizeButtonH=40;
+/* essai actuel */
 int actualEssay=1;
+/* tri actuel */
 boolean sortActual=false;
+/* nombre Error maximum pour accepter une similarite*/ 
 int limitError=22;
+/* nombre de changement */
 int nbChange=0;
+
+/* Setup de la demo */
 void setup() {
   size(1024, 768);
   tableEssay1 = loadTable("TermConcept_Essay1.csv");
