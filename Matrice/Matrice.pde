@@ -1,3 +1,4 @@
+/* Table qui seront charger avec les resultats de LSA*/
 Table tableEssay1;
 Table tableEssay2;
 Table tableEssay3;
@@ -6,9 +7,13 @@ Table tableEssay5;
 Table tableEssay6;
 Table tableEssay7;
 Table tableEssay8;
+/*Table actuel*/
 Table actualTableEssay=tableEssay1;
+/* Index actuel*/
 int actualIndexSort=0;
+/* Est ce qu il n y a plus de desimilarite */
 boolean finish=false;
+/* tableau des couleurs */
 color []inside = new color[11];
 int column=1;
 int loopH=1;
