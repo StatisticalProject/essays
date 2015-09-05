@@ -72,10 +72,13 @@ void draw(){
   background(240);
   /* demarage des element en y*/
   int globalStartH=150;
+  /* on dessine le zoom*/
   drawPart(0,globalStartH);
+  /* on dessine les donnees reduite de droite*/
   drawAll(750,globalStartH);
   
   if (mousePressed) {
+    /* si un click est fait on cherche l'interaction*/
     calculate(mouseX,mouseY,750,globalStartH);
   }
  
