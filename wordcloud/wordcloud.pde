@@ -4,9 +4,13 @@ import java.util.*;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Collections;
+/* liste des termes avec leur valeur*/
 ArrayList<TermForce> actu;
+/* 8 modele d'essai */
 Model [] modeles= new Model[8];
+
 String BASE="Base";
+/* Table qui seront charger avec les resultats de LSA*/
 Table tableEssay1;
 Table tableEssay2;
 Table tableEssay3;
@@ -15,7 +19,9 @@ Table tableEssay5;
 Table tableEssay6;
 Table tableEssay7;
 Table tableEssay8;
+/* loading flag*/
 boolean loading=false;
+/* debut */ 
 int xbase=100,ybase=101;
 int indiceActu=4;
 String labelActuel="0";
