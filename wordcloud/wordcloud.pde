@@ -45,7 +45,9 @@ int actualEssay=1;
 int windowSize=30,beginWindow=10,endWindows=beginWindow+windowSize;
 /* boucle*/
 int loopH=1;
-
+/* taille des boutons*/
+int sizeButtonW=70;
+int sizeButtonH=40;
 /* initalisation */
 void setup(){
 	/* chargement des essais */
@@ -245,6 +247,7 @@ boolean check(ArrayList<TermForce> checks, TermForce toCheck){
   return false;
 }
 
+/* filtre les n premiers resultats*/
 Map<String,ArrayList<TermForce> > select(Map<String,ArrayList<TermForce> > arranging,int sized) {
    Map<String,ArrayList<TermForce> > termeSize = new TreeMap<String,ArrayList<TermForce> >();
     //respect same order for all
@@ -265,6 +268,7 @@ Map<String,ArrayList<TermForce> > select(Map<String,ArrayList<TermForce> > arran
     }
     return termeSize;
 }  
+/* tri des resultats */
 Map<String,ArrayList<TermForce> > sortAndOrder(Map<String,ArrayList<TermForce> > arranging) {
    Map<String,ArrayList<TermForce> > termeSize = new TreeMap<String,ArrayList<TermForce> >();
     //respect same order for all
@@ -283,7 +287,7 @@ Map<String,ArrayList<TermForce> > sortAndOrder(Map<String,ArrayList<TermForce> >
     }
     return termeSize;
 } 
-      
+/* calcul de la probabilite de chaque note par terme*/      
 Map<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction){
     HashMap<String,Integer> colors=new HashMap();
     TreeMap<String,ArrayList<TermForce> > termeSize = new TreeMap<String,ArrayList<TermForce> >();
@@ -347,7 +351,7 @@ Map<String,ArrayList<TermForce> > makeComplex (Table essai,Model correction){
 }
 
 
-
+/* taille maximum*/
 class MaxSize{
   
   float max=0.0;
@@ -356,11 +360,13 @@ class MaxSize{
   float fontMin=8;
 }
 
+/* comparateur de terme avec sa probabilité*/
 class TermForceComparator implements Comparator<TermForce>{
   int compare(TermForce o1, TermForce o2){
     return o1.compareTo(o2);
   }
 }
+/*terme avec sa probabilité, sa taille de fonte,sa couleur, sa taille et son emplacement*/
 class TermForce  {
   String name;
   float value;
@@ -425,8 +431,7 @@ class TermForce  {
   
   
 }
-int sizeButtonW=70;
-int sizeButtonH=40;
+
 
 class Model{
   HashMap <String,ArrayList<Float>> map;
