@@ -32,6 +32,15 @@ int selectedFontMax[]=new int []{33,30,30,25,22};
 /* taille des fontes min par nombre terme */
 int selectedFontMin[]=new int []{22,18,15,11,9};
 
+/* Table hashé des termes et leur probabilité */
+Map<String,ArrayList<TermForce> > complete;
+Map<String,ArrayList<TermForce> > completeActu;
+/* compteur */
+int maxiXounter=1;
+/* maximum de terme */ 
+int maxi=500;
+      
+
 /* initalisation */
 void setup(){
 	/* chargement des essais */
@@ -70,24 +79,27 @@ void setup(){
             if(name.equals("Essay7")){ modeles[6].put(label,list); }
             if(name.equals("Essay8")){ modeles[7].put(label,list); }
         }
+        // taille dec l'ecran
         size(800,800);
         
-
+        /* calcul les probabilite des notes par terme pour l essai 1 avec le modele */
         completeActu=makeComplex (tableEssay1,modeles[0]);
+        /* on tri les resultats*/
         completeActu=sortAndOrder(completeActu);
+        /* selectionne le nombre de resultat */
         complete=select(sortAndOrder(completeActu),500);
+        /* on calcul la taille des font max et min*/
         calculateFontSize(complete);
+        /* on arrange les resultats*/
         arrange(complete);
+        /* on recupere le resultat de la note 0 pour le premier affichage*/ 
         actu=complete.get("0");
+        /* on imprime le nombre de resultat*/ 
         println(tableEssay1.getColumnCount());
         
         
       
       }
-      Map<String,ArrayList<TermForce> > complete;
-      Map<String,ArrayList<TermForce> > completeActu;
-      int maxiXounter=1;
-      int maxi=500;
       
       void draw(){
         background(255);
