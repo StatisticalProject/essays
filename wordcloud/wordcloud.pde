@@ -41,6 +41,11 @@ int maxiXounter=1;
 int maxi=500;
 /* essai actuel */       
 int actualEssay=1;
+/* taille des boutons */
+int windowSize=30,beginWindow=10,endWindows=beginWindow+windowSize;
+/* boucle*/
+int loopH=1;
+
 /* initalisation */
 void setup(){
 	/* chargement des essais */
@@ -123,9 +128,10 @@ void setup(){
         drawSizer();
       }
       
-      
+/* on dessine la reglette */      
 void drawSizer(){
       stroke(1);
+      // liste des 5 tailles
         String sizeStr[]=new String[]{"10","50","100","250","500"};
         for (int i=0;i<5;i++){
           int lin=ybase+20+28*i;
@@ -137,9 +143,11 @@ void drawSizer(){
         rect(xbase, ybase, 10, 150, 7);
         fill(255);
         rect(xbase-5, ybase+20+28*indiceActu-5, 20, 10, 7);
+        //le bouton pour recalculer la spirale
         writeButton("Arranger",xbase-20,ybase-17,true,overRect(xbase-20,ybase-17,50,15),50,15,5,12,10);
 
 }
+// on dessine les boutons
 void drawButtons(){
   for (int y=1;y<9;y++){
     drawButton(y,actualEssay==y);
@@ -158,6 +166,7 @@ int sizeButtonH=40;
     writeButton(Integer.toString(i),x,y,!labelActuel.equals(Integer.toString(i)),overRect(x,y,sizeButtonW/2,sizeButtonH),sizeButtonW/2, sizeButtonH,11,25,12);
   }
 }      
+/* on calcul la taille des fontes*/
 void calculateFontSize(Map<String,ArrayList<TermForce> > arranging) {
   for (String label : arranging.keySet()) {
       ArrayList<TermForce> bases=arranging.get(label);
@@ -167,8 +176,6 @@ void calculateFontSize(Map<String,ArrayList<TermForce> > arranging) {
   
   
 }
-int windowSize=30,beginWindow=10,endWindows=beginWindow+windowSize;
-int loopH=1;
 void calculate(int mouseX,int mouseY,int x,int y){
   if (mouseX<x){
     return;
