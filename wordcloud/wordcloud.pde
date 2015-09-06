@@ -39,8 +39,8 @@ Map<String,ArrayList<TermForce> > completeActu;
 int maxiXounter=1;
 /* maximum de terme */ 
 int maxi=500;
-      
-
+/* essai actuel */       
+int actualEssay=1;
 /* initalisation */
 void setup(){
 	/* chargement des essais */
@@ -90,7 +90,7 @@ void setup(){
         complete=select(sortAndOrder(completeActu),500);
         /* on calcul la taille des font max et min*/
         calculateFontSize(complete);
-        /* on arrange les resultats*/
+        /* on arrange les resultats en spirale*/
         arrange(complete);
         /* on recupere le resultat de la note 0 pour le premier affichage*/ 
         actu=complete.get("0");
@@ -101,25 +101,29 @@ void setup(){
       
       }
       
+      /* affichage *
       void draw(){
+       /* on nettoie l 'arriere plan*/
         background(255);
+        /* on dessine chacun des termes selectionnes sur la note et l essai*/
         for (TermForce term:actu){
           term.display();
         }
+        /* action si la souris est cliquer*/
         if (mousePressed) {
           calculate(mouseX,mouseY,750,10);
         }
-        
+        /* on dessine les bouton*/
         drawButtons();
-
+        /* si chargement alors on affiche un bouton*/
         if(loading){ 
           writeButton("Loading",width/2,height/2,true,true,sizeButtonW, sizeButtonH,18,25,12);
         }
-        
+        /* on dessine le selectionneur du nombre de resultat*/
         drawSizer();
       }
       
-      int actualEssay=1;
+      
 void drawSizer(){
       stroke(1);
         String sizeStr[]=new String[]{"10","50","100","250","500"};
