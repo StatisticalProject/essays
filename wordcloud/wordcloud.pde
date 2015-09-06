@@ -23,12 +23,18 @@ Table tableEssay8;
 boolean loading=false;
 /* debut */ 
 int xbase=100,ybase=101;
+/* indice actuel representant la note*/
 int indiceActu=4;
+/* indice representant la note en string */
 String labelActuel="0";
+/* taille des fontes max par nombre terme */
 int selectedFontMax[]=new int []{33,30,30,25,22};
+/* taille des fontes min par nombre terme */
 int selectedFontMin[]=new int []{22,18,15,11,9};
 
+/* initalisation */
 void setup(){
+	/* chargement des essais */
 	tableEssay1 = loadTable("TermConcept_Essay1.csv");
 	tableEssay2 = loadTable("TermConcept_Essay2.csv");
 	tableEssay3 = loadTable("TermConcept_Essay3.csv");
@@ -37,13 +43,16 @@ void setup(){
 	tableEssay6 = loadTable("TermConcept_Essay6.csv");
 	tableEssay7 = loadTable("TermConcept_Essay7.csv");
 	tableEssay8 = loadTable("TermConcept_Essay8.csv");
+        /* hcrgement des données de modèle*/
         Table modelLoad = loadTable("ModelTest.csv");
         
+        
         HashMap<String,Float> essai = new HashMap<String,Float>();
+        // initialisation de la liste des modèles
         for (int i=0;i<8;i++) {
           modeles[i]=new Model();
         }
-// Putting key-value pairs in the HashMap        
+	// chargement des modeles de chaque essai
         for (TableRow row : modelLoad.rows()) {
             String name = row.getString(0);
             String label = Integer.toString(Integer.parseInt(row.getString(1))+1);
