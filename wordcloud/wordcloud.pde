@@ -176,6 +176,8 @@ void calculateFontSize(Map<String,ArrayList<TermForce> > arranging) {
   
   
 }
+
+//intersection
 void calculate(int mouseX,int mouseY,int x,int y){
   if (mouseX<x){
     return;
@@ -192,11 +194,13 @@ void calculate(int mouseX,int mouseY,int x,int y){
     beginWindow=endWindows-windowSize;
   }
 }
-
+// calcule de la spirale des mots
 void arrange(Map<String,ArrayList<TermForce> > arranging) {
-     
+     //cntre de la spirale
     float cx=width/2,cy=height/2;
+    //Eloignement et angle
     float R=0.0,dR=1.0,theta=0.0,dTheta=0.05;
+    //bruit
     float Rnoise=0.0,dRnoise=1.5;
     for (String label : arranging.keySet()) {
       R=0.0;
@@ -206,7 +210,6 @@ void arrange(Map<String,ArrayList<TermForce> > arranging) {
       for(TermForce arrange:bases){
               R=0.0;
         theta=random(100)/100;
-
         arrange.calculateValue();
         arrange.calculateDisplay();
         do{
@@ -224,9 +227,11 @@ void arrange(Map<String,ArrayList<TermForce> > arranging) {
     }
 
 }
+// bruit gaussien
 float customNoise(float value){
     return noise(value);
 }
+//regarde si le terme actuel est en conflit avec les termes deja affiche
 boolean check(ArrayList<TermForce> checks, TermForce toCheck){
   if(toCheck.checkLimit(0,0,width,height)){
     return true;
