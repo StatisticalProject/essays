@@ -1,0 +1,15 @@
+# Ho to launch the data processing
+
+#you need to download lsa.jar
+wget http://cedric.cnam.fr/~ferecatu/RCP216/tp/tptexte/lsa.jar
+
+#you need to apache spark installed to launnch the following commands
+#make LSA calculation
+spark-shell -jars lsa.jar -i makeLSA.scala
+#make model calcaulation
+spark-shell  -i makeModel.scala
+#make export to use inside processing 
+spark-shell  -i makeExport.scala
+
+#processing code on the directories Matrice and wordcloud
+
