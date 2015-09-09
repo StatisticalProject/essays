@@ -108,9 +108,9 @@ void setup(){
       
       }
       
-      /* affichage *
-      void draw(){
-       /* on nettoie l 'arriere plan*/
+/* affichage */
+void draw(){
+       /* on nettoie l arriere plan*/
         background(255);
         /* on dessine chacun des termes selectionnes sur la note et l essai*/
         for (TermForce term:actu){
